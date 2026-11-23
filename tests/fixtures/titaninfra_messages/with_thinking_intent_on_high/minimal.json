@@ -1,0 +1,39 @@
+{
+  "_scenario": "with_thinking_intent_on_high",
+  "_variant": "minimal",
+  "_description": "Sample-level mode=on + effort=high \u2014 encoder injects/honors deep thinking branch per family policy.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "thinking_intent_mode",
+    "thinking_intent_effort"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "2+2?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "4"
+          }
+        ]
+      }
+    ],
+    "thinking_intent": {
+      "mode": "on",
+      "effort": "high"
+    }
+  }
+}

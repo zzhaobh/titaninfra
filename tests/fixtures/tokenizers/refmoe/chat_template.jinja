@@ -1,0 +1,103 @@
+{%- macro render_extra_keys(json_dict, handled_keys) -%}
+    {%- if json_dict is mapping -%}
+        {%- for json_key in json_dict if json_key not in handled_keys -%}
+            {%- if json_dict[json_key] is mapping or (json_dict[json_key] is sequence and json_dict[json_key] is not string) -%}
+                {{- '\n<' ~ json_key ~ '>' ~ (json_dict[json_key] | tojson | safe) ~ '</' ~ json_key ~ '>' -}}
+            {%- else -%}
+                {{- '\n<' ~ json_key ~ '>' ~ (json_dict[json_key] | string) ~ '</' ~ json_key ~ '>' -}}
+            {%- endif -%}
+        {%- endfor -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- if not add_generation_prompt is defined -%}{%- set add_generation_prompt = false -%}{%- endif -%}
+
+{%- set ns = namespace(system_prompt='', is_first_sp=true, is_last_user=false) -%}
+{%- set default_system = "You are JoyAI , a large language model trained by JD（京东）that can interact with a computer to solve tasks. Answer as concisely as possible." -%}
+{%- set ns.system_prompt = default_system -%}
+
+{%- for message in messages -%}
+    {%- if message['role'] == 'system' -%}
+        {%- if ns.is_first_sp -%}
+            {%- set ns.system_prompt = message['content'] -%}
+            {%- set ns.is_first_sp = false -%}
+        {%- else -%}
+            {%- set ns.system_prompt = ns.system_prompt + '\n\n' + message['content'] -%}
+        {%- endif -%}
+    {%- endif -%}
+{%- endfor -%}
+
+{{- bos_token -}}{{- ns.system_prompt -}}
+{%- if tools is iterable and tools | length > 0 -%}
+    {{- "\n\n# Tools\n\nYou have access to the following functions:\n\n" }}
+    {{- "<tools>" }}
+    {%- for tool in tools %}
+        {%- if tool.function is defined %}
+            {%- set tool = tool.function %}
+        {%- endif %}
+        {{- "\n<function>\n<name>" ~ tool.name ~ "</name>" }}
+        {%- if tool.description is defined %}
+            {{- '\n<description>' ~ (tool.description | trim) ~ '</description>' }}
+        {%- endif %}
+        {{- '\n<parameters>' }}
+        {%- if tool.parameters is defined and tool.parameters is mapping and tool.parameters.properties is defined and tool.parameters.properties is mapping %}
+            {%- for param_name, param_fields in tool.parameters.properties|items %}
+                {{- '\n<parameter>' }}
+                {{- '\n<name>' ~ param_name ~ '</name>' }}
+                {%- if param_fields.type is defined %}
+                    {{- '\n<type>' ~ (param_fields.type | string) ~ '</type>' }}
+                {%- endif %}
+                {%- if param_fields.description is defined %}
+                    {{- '\n<description>' ~ (param_fields.description | trim) ~ '</description>' }}
+                {%- endif %}
+                {%- set handled_keys = ['name', 'type', 'description'] %}
+                {{- render_extra_keys(param_fields, handled_keys) }}
+                {{- '\n</parameter>' }}
+            {%- endfor %}
+        {%- endif %}
+        {% set handled_keys = ['type', 'properties'] %}
+        {{- render_extra_keys(tool.parameters, handled_keys) }}
+        {{- '\n</parameters>' }}
+        {%- set handled_keys = ['type', 'name', 'description', 'parameters'] %}
+        {{- render_extra_keys(tool, handled_keys) }}
+        {{- '\n</function>' }}
+    {%- endfor %}
+    {{- "\n</tools>" }}
+    {{- '\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT>' }}
+{%- endif %}
+{%- for message in messages -%}
+    {%- if message['role'] == 'user' -%}
+        {%- set ns.is_last_user = true -%}
+        {{- '<|User|>' + message['content'] -}}
+    {%- elif message['role'] == 'assistant' -%}
+        {%- if ns.is_last_user -%}
+            {{ '<|Assistant|>' }}
+        {%- endif -%}
+        {%- set ns.is_last_user = false -%}
+        {%- set content = message.get('content') | default('', true) -%}
+        {{ '<|end_of_thought|>' + content }}
+        {%- if message['tool_calls'] is defined and message['tool_calls'] is not none -%}
+            {%- for tool in message['tool_calls'] -%}
+                {%- if tool.function is defined %}{% set tool = tool.function %}{% endif -%}
+                {{- '\n<tool_call>\n<function=' + tool.name + '>\n' -}}
+                {%- if tool.arguments is defined -%}
+                    {%- if tool.arguments is string -%}{%- set args_data = tool.arguments | from_json -%}{%- else -%}{%- set args_data = tool.arguments -%}{%- endif -%}
+                    {%- for args_name, args_value in args_data.items() -%}
+                        {{- '<parameter=' + args_name + '>\n' -}}
+                        {%- set args_value = args_value | tojson | safe if args_value is mapping or (args_value is sequence and args_value is not string) else args_value | string -%}
+                        {{- args_value -}}{{- '\n</parameter>\n' -}}
+                    {%- endfor -%}
+                {%- endif -%}
+                {{- '</function>\n</tool_call>' -}}
+            {%- endfor -%}
+        {%- endif -%}
+        {{ '<|end▁of▁sentence|>' }}
+    {%- elif message['role'] == 'tool' -%}
+        {%- set ns.is_last_user = true -%}
+        {{ '\n<tool_response>\n' + message['content'] + '\n</tool_response>' }}
+    {%- endif -%}
+{%- endfor -%}
+
+{%- if add_generation_prompt -%}
+    {{ '<|Assistant|>' }}{{ '<|end_of_thought|>' }}
+{%- endif -%}

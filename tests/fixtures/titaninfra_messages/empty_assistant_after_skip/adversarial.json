@@ -1,0 +1,79 @@
+{
+  "_scenario": "empty_assistant_after_skip",
+  "_variant": "adversarial",
+  "_description": "Multi-turn dialogue where EVERY assistant turn carries only unsupported blocks.",
+  "_uses_blocks": [
+    "ThinkingBlock",
+    "ToolUseBlock"
+  ],
+  "_uses_features": [
+    "thinking_current_turn",
+    "tool_call"
+  ],
+  "_expects_empty_for_families": [
+    "qwen2_5",
+    "llama3"
+  ],
+  "sample": {
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Return current weather for a city.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City name"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Q1"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "history thought"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Q2"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "tool_use",
+            "id": "c1",
+            "name": "get_weather",
+            "input": {
+              "city": "X"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

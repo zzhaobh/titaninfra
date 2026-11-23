@@ -1,0 +1,87 @@
+{
+  "_scenario": "with_tool_call_parallel",
+  "_variant": "adversarial",
+  "_description": "Four parallel tool_use blocks (N=4) — stresses encoders that hard-code N=1 or N=2.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ToolUseBlock"
+  ],
+  "_uses_features": [
+    "tools_declaration",
+    "tool_call",
+    "parallel_tool_calls"
+  ],
+  "_expects_empty_for_families": [
+    "deepseek_v4",
+    "llama3",
+    "qwen2_5"
+  ],
+  "sample": {
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Return current weather for a city.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City name"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Weather in Beijing, Tokyo, Seoul, and Hanoi?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "tool_use",
+            "id": "c1",
+            "name": "get_weather",
+            "input": {
+              "city": "Beijing"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "c2",
+            "name": "get_weather",
+            "input": {
+              "city": "Tokyo"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "c3",
+            "name": "get_weather",
+            "input": {
+              "city": "Seoul"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "c4",
+            "name": "get_weather",
+            "input": {
+              "city": "Hanoi"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "_scenario": "type_overrides_thinking_half",
+  "_variant": "minimal",
+  "_description": "loss_config.type_overrides applies thinking ×0.5 across the sample.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "type_overrides",
+    "thinking_current_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "loss_config": {
+      "type_overrides": {
+        "thinking": 0.5
+      }
+    },
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Q"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "internal reasoning"
+          },
+          {
+            "type": "text",
+            "text": "answer"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "_scenario": "single_turn_plain",
+  "_variant": "realistic",
+  "_description": "Single-turn Q/A with natural-language answer.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Explain the Pythagorean theorem in one sentence."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "In any right-angled triangle, the square of the hypotenuse equals the sum of the squares of the other two sides (a² + b² = c²)."
+          }
+        ]
+      }
+    ]
+  }
+}

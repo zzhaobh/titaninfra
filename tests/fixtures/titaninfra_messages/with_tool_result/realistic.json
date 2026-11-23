@@ -1,0 +1,95 @@
+{
+  "_scenario": "with_tool_result",
+  "_variant": "realistic",
+  "_description": "Two parallel tool_results in one tool message, followed by a synthesised answer.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ToolUseBlock",
+    "ToolResultBlock"
+  ],
+  "_uses_features": [
+    "tools_declaration",
+    "tool_call",
+    "tool_result",
+    "parallel_tool_calls"
+  ],
+  "_expects_empty_for_families": [
+    "deepseek_v4"
+  ],
+  "sample": {
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Return current weather for a city.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City name"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Weather in Beijing and Shanghai?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "tool_use",
+            "id": "c_bj",
+            "name": "get_weather",
+            "input": {
+              "city": "Beijing"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "c_sh",
+            "name": "get_weather",
+            "input": {
+              "city": "Shanghai"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "c_bj",
+            "text": "{\"temp\": 25, \"condition\": \"sunny\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "c_sh",
+            "text": "{\"temp\": 28, \"condition\": \"cloudy\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Beijing is 25°C and sunny; Shanghai is 28°C and cloudy."
+          }
+        ]
+      }
+    ]
+  }
+}

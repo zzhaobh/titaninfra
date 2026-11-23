@@ -1,0 +1,1 @@
+<｜begin▁of▁sentence｜><｜User｜>Look up the weather in Tokyo.<｜Assistant｜>I'll check the weather for you.<｜end▁of▁sentence｜><｜tool▁outputs▁begin｜><｜tool▁output▁begin｜>{"city": "Tokyo", "temp_c": 18, "condition": "cloudy"}<｜tool▁output▁end｜><｜tool▁outputs▁end｜>Tokyo is currently 18 C and cloudy.<｜end▁of▁sentence｜>

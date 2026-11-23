@@ -1,0 +1,63 @@
+{
+  "_comment": "TitanInfra-native SFTSample for DSV4 case 1: thinking + DSML tool calls (multi-turn). Tools present → effective_drop_thinking=False → both assistant turns keep ThinkingBlock. Expected output: test_output_1.txt",
+  "messages": [
+    {
+      "role": "system",
+      "blocks": [
+        {"type": "text", "text": "You are a helpful assistant."}
+      ]
+    },
+    {
+      "role": "user",
+      "blocks": [
+        {"type": "text", "text": "What's the weather in Beijing?"}
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "thinking", "text": "The user wants to know the weather in Beijing. I should use the get_weather tool."},
+        {"type": "tool_use", "id": "call_001", "name": "get_weather", "input": {"location": "Beijing", "unit": "celsius"}}
+      ]
+    },
+    {
+      "role": "tool",
+      "blocks": [
+        {"type": "tool_result", "tool_use_id": "call_001", "text": "{\"temperature\": 22, \"condition\": \"sunny\", \"humidity\": 45}"}
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "thinking", "text": "Got the weather data. Let me format a nice response."},
+        {"type": "text", "text": "The weather in Beijing is currently sunny with a temperature of 22°C and 45% humidity."}
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "get_weather",
+      "description": "Get the weather for a specific location",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "location": {"type": "string", "description": "The city name"},
+          "unit": {"type": "string", "enum": ["celsius", "fahrenheit"], "description": "Temperature unit"}
+        },
+        "required": ["location"]
+      }
+    },
+    {
+      "name": "search",
+      "description": "Search the web for information",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string", "description": "Search query"},
+          "num_results": {"type": "integer", "description": "Number of results to return"}
+        },
+        "required": ["query"]
+      }
+    }
+  ]
+}

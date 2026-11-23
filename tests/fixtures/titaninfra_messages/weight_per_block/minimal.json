@@ -1,0 +1,39 @@
+{
+  "_scenario": "weight_per_block",
+  "_variant": "minimal",
+  "_description": "Assistant has a text block with explicit weight=0 — that block masked, but the message overall is non-empty so encoding proceeds.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "loss_weight_per_block"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "draft a reply"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Draft (don't train)",
+            "weight": 0
+          },
+          {
+            "type": "text",
+            "text": "Final version (train)."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+[
+  {
+    "_scenario": "basic_single_turn",
+    "messages": [
+      {"role": "user", "content": "你好"},
+      {"role": "assistant", "content": "你好！有什么可以帮助你的？"}
+    ]
+  },
+  {
+    "_scenario": "with_system",
+    "messages": [
+      {"role": "system", "content": "你是一个专业的翻译助手，只做中英互译。"},
+      {"role": "user", "content": "翻译：今天天气很好"},
+      {"role": "assistant", "content": "The weather is nice today."}
+    ]
+  },
+  {
+    "_scenario": "multi_turn",
+    "messages": [
+      {"role": "user", "content": "1+1等于几？"},
+      {"role": "assistant", "content": "1+1等于2。"},
+      {"role": "user", "content": "再加3呢？"},
+      {"role": "assistant", "content": "2+3等于5。"}
+    ]
+  },
+  {
+    "_scenario": "thinking_cot",
+    "_note": "Qwen3 Jinja 要求 content 中包含 <think> 标签；DeepSeek/Llama4 不自动注入",
+    "messages": [
+      {"role": "user", "content": "证明根号2是无理数"},
+      {"role": "assistant", "content": "<think>\n使用反证法。假设根号2是有理数，可以表示为 p/q（最简分数）。\n那么 2 = p²/q²，即 p² = 2q²。\np² 是偶数，所以 p 是偶数，设 p = 2k。\n代入得 4k² = 2q²，即 q² = 2k²，所以 q 也是偶数。\n但 p 和 q 都是偶数，与最简分数矛盾。\n</think>\n\n根号2是无理数。\n\n证明（反证法）：\n假设√2 = p/q（最简分数），则 p² = 2q²。\np² 为偶数 → p 为偶数，设 p = 2k → q² = 2k² → q 为偶数。\np、q 都为偶数，与最简分数矛盾。故√2为无理数。"}
+    ]
+  },
+  {
+    "_scenario": "tool_call",
+    "_note": "Qwen3 的 Jinja 用 tool_calls 字段 + tool role；其他模型各有差异",
+    "messages": [
+      {"role": "user", "content": "北京今天天气怎么样？"},
+      {"role": "assistant", "content": "", "tool_calls": [{"type": "function", "function": {"name": "get_weather", "arguments": "{\"city\": \"北京\"}"}}]},
+      {"role": "tool", "content": "{\"temperature\": 25, \"condition\": \"晴\", \"humidity\": 40}"},
+      {"role": "assistant", "content": "北京今天天气晴朗，气温25°C，湿度40%。适合户外活动。"}
+    ]
+  },
+  {
+    "_scenario": "plain_text_no_thinking",
+    "_note": "无 thinking 的纯文本场景 — Qwen3 Jinja 会自动注入空 <think> 标签",
+    "messages": [
+      {"role": "user", "content": "什么是Python？"},
+      {"role": "assistant", "content": "Python是一种高级编程语言。"}
+    ]
+  }
+]

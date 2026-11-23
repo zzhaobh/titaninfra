@@ -1,0 +1,92 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local configs
+.env
+.env.local
+
+# Checkpoints
+checkpoints/
+outputs/
+runs/
+*.pt
+*.pth
+*.safetensors
+
+# Temp files
+tmp/
+temp/
+*.tmp
+
+# MDS 生成数据（在 GPU 节点用 gen_test_mds.py / convert_sft_to_mds.py 生成）
+data/**/mds/
+data/**/mds_sft/
+.tilelang_research/
+
+# 本地私有记忆（含内部路径），不入库
+.memory/
+
+# coverage artifacts
+.coverage
+.coverage.*
+
+# Local release tooling and execution ledgers
+.venv-release/
+.superpowers/
+
+# Agent-only project instructions and harness state
+CLAUDE.md
+AGENTS.md
+.claude/
+.agents/
+
+# Raw datasets and generated multimodal fixtures
+/data/
+tests/fixtures/multimodal/**/*.lance
+
+# Downloaded tokenizer/model assets (bootstrap with download_all.py)
+tests/fixtures/tokenizers/**/tokenizer.json
+tests/fixtures/tokenizers/**/tokenizer_config.json
+tests/fixtures/tokenizers/**/special_tokens_map.json
+tests/fixtures/tokenizers/**/generation_config.json
+tests/fixtures/tokenizers/**/tiktoken.model
+tests/fixtures/tokenizers/**/tokenization_moonshot.py

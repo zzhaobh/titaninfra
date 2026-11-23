@@ -1,0 +1,42 @@
+{
+  "_description": "P0 DSv4 fixture: system + single-turn. Exercises system block emission through the DSv4 encoder. No thinking / tools / tool_calls.",
+  "family": "deepseek_v4",
+  "tokenizer_path": "tests/fixtures/tokenizers/deepseek_v4",
+  "sample": {
+    "messages": [
+      {
+        "role": "system",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "You are a helpful assistant."
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Hi"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Hello!"
+          }
+        ]
+      }
+    ]
+  },
+  "max_length": 512,
+  "expected": {
+    "n_tokens": 14,
+    "n_loss_tokens": 4,
+    "decoded": "<｜begin▁of▁sentence｜>You are a helpful assistant.<｜User｜>Hi<｜Assistant｜></think>Hello!<｜end▁of▁sentence｜>"
+  }
+}

@@ -1,0 +1,1 @@
+<｜begin▁of▁sentence｜>You are a concise math tutor. Answer in one sentence.<｜User｜>What is 7 times 8?<｜Assistant｜>56<｜end▁of▁sentence｜><｜User｜>And 9 times 9?<｜Assistant｜>81<｜end▁of▁sentence｜>

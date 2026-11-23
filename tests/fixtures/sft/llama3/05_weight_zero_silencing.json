@@ -1,0 +1,32 @@
+{
+  "_description": "llama3 fixture: first assistant turn carries weight=0 (silenced), second is trained. Exercises the per-message weight=0 carve-out (always respected). Golden snapshot — n_loss_tokens reflects only the second answer.",
+  "family": "llama3",
+  "tokenizer_path": "tests/fixtures/tokenizers/llama3",
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Hi"
+      },
+      {
+        "role": "assistant",
+        "content": "ignored turn",
+        "weight": 0.0
+      },
+      {
+        "role": "user",
+        "content": "What's 2+2?"
+      },
+      {
+        "role": "assistant",
+        "content": "4"
+      }
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "n_tokens": 36,
+    "n_loss_tokens": 2,
+    "decoded": "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\nHi<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nignored turn<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nWhat's 2+2?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n4<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
+  }
+}

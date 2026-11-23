@@ -1,0 +1,30 @@
+{
+  "_comment": "TitanInfra-native SFTSample for DSV3 case 4: weight=0 history masking. Earlier assistant turn marked weight=0 (history context), final assistant turn carries loss. Validates per-message weight propagation through Jinja path.",
+  "messages": [
+    {
+      "role": "user",
+      "blocks": [
+        {"type": "text", "text": "Translate 'hello' to French."}
+      ]
+    },
+    {
+      "role": "assistant",
+      "weight": 0,
+      "blocks": [
+        {"type": "text", "text": "Bonjour"}
+      ]
+    },
+    {
+      "role": "user",
+      "blocks": [
+        {"type": "text", "text": "And to Spanish?"}
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "text", "text": "Hola"}
+      ]
+    }
+  ]
+}

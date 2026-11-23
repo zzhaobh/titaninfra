@@ -1,0 +1,59 @@
+{
+  "_description": "P0 DSv4 fixture: 2-exchange multi-turn where BOTH assistant turns carry thinking. DSv4 supervises historical thinking by default (no history_policy) — golden pins that both <think> blocks emit. Golden snapshot.",
+  "family": "deepseek_v4",
+  "tokenizer_path": "tests/fixtures/tokenizers/deepseek_v4",
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "What is 2+2?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "Adding two and two."
+          },
+          {
+            "type": "text",
+            "text": "4"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "And times 3?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "Four times three is twelve."
+          },
+          {
+            "type": "text",
+            "text": "12"
+          }
+        ]
+      }
+    ]
+  },
+  "max_length": 512,
+  "expected": {
+    "n_tokens": 36,
+    "n_loss_tokens": 19,
+    "decoded": "<｜begin▁of▁sentence｜><｜User｜>What is 2+2?<｜Assistant｜><think>Adding two and two.</think>4<｜end▁of▁sentence｜><｜User｜>And times 3?<｜Assistant｜><think>Four times three is twelve.</think>12<｜end▁of▁sentence｜>"
+  }
+}

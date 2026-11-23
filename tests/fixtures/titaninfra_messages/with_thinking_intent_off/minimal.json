@@ -1,0 +1,37 @@
+{
+  "_scenario": "with_thinking_intent_off",
+  "_variant": "minimal",
+  "_description": "Sample-level mode=off — model should produce direct answer (no thinking branch).",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "thinking_intent_mode"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "2+2?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "4"
+          }
+        ]
+      }
+    ],
+    "thinking_intent": {
+      "mode": "off"
+    }
+  }
+}

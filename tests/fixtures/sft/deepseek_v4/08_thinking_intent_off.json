@@ -1,0 +1,40 @@
+{
+  "_description": "P0 DSv4 fixture: thinking_intent.mode=off forces nm.thinking=None, so the wire emits the bare </think> close marker (no reasoning body). Exercises the mode=off projection. Golden snapshot.",
+  "family": "deepseek_v4",
+  "tokenizer_path": "tests/fixtures/tokenizers/deepseek_v4",
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Solve 2+2."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "Two plus two equals four."
+          },
+          {
+            "type": "text",
+            "text": "4"
+          }
+        ]
+      }
+    ],
+    "thinking_intent": {
+      "mode": "off"
+    }
+  },
+  "max_length": 512,
+  "expected": {
+    "n_tokens": 12,
+    "n_loss_tokens": 3,
+    "decoded": "<｜begin▁of▁sentence｜><｜User｜>Solve 2+2.<｜Assistant｜></think>4<｜end▁of▁sentence｜>"
+  }
+}

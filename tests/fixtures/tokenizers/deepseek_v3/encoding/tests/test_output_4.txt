@@ -1,0 +1,1 @@
+<｜begin▁of▁sentence｜><｜User｜>Translate 'hello' to French.<｜Assistant｜>Bonjour<｜end▁of▁sentence｜><｜User｜>And to Spanish?<｜Assistant｜>Hola<｜end▁of▁sentence｜>

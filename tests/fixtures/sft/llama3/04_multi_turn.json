@@ -1,0 +1,39 @@
+{
+  "_description": "llama3 fixture: 3-exchange multi-turn (text-only). Exercises inter-turn header markers and that every assistant turn is supervised. L1 parity vs jinja (existing parity test), L2 may diverge only at trailer. Golden snapshot for n_tokens.",
+  "family": "llama3",
+  "tokenizer_path": "tests/fixtures/tokenizers/llama3",
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "Hi"
+      },
+      {
+        "role": "assistant",
+        "content": "Hello!"
+      },
+      {
+        "role": "user",
+        "content": "What's 2+2?"
+      },
+      {
+        "role": "assistant",
+        "content": "4"
+      },
+      {
+        "role": "user",
+        "content": "And 3+3?"
+      },
+      {
+        "role": "assistant",
+        "content": "6"
+      }
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "n_tokens": 53,
+    "n_loss_tokens": 7,
+    "decoded": "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\nHi<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\nHello!<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nWhat's 2+2?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n4<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nAnd 3+3?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n6<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
+  }
+}

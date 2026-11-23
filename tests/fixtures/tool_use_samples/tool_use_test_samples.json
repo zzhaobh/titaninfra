@@ -1,0 +1,2893 @@
+[
+  {
+    "_source": "xlam",
+    "_xlam_id": 0,
+    "_scenario": "xlam_parallel_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "live_giveaways_by_type",
+          "description": "Retrieve live giveaways from the GamerPower API based on the specified type.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "str",
+                "description": "The type of giveaways to retrieve (e.g., game, loot, beta)."
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Where can I find live giveaways for beta access and games?"
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Where can I find live giveaways for beta access and games? This needs 2 parallel calls: `live_giveaways_by_type`, `live_giveaways_by_type`. I'll dispatch them together."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_0_0",
+            "name": "live_giveaways_by_type",
+            "input": {
+              "type": "beta"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_0_1",
+            "name": "live_giveaways_by_type",
+            "input": {
+              "type": "game"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_0_0",
+            "text": "{\"status\": \"success\", \"function\": \"live_giveaways_by_type\", \"arguments\": {\"type\": \"beta\"}, \"result\": \"<synthetic result for live_giveaways_by_type>\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_0_1",
+            "text": "{\"status\": \"success\", \"function\": \"live_giveaways_by_type\", \"arguments\": {\"type\": \"game\"}, \"result\": \"<synthetic result for live_giveaways_by_type>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `live_giveaways_by_type` and `live_giveaways_by_type` for your query: \"Where can I find live giveaways for beta access and games?\". The 2 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 1,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "peers",
+          "description": "Retrieves a list of company peers given a stock symbol.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "str",
+                "description": "The stock symbol for the company."
+              }
+            },
+            "required": [
+              "symbol"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "web_chain_details",
+          "description": "python",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "chain_slug": {
+                "type": "str",
+                "description": "The slug identifier for the blockchain (e.g., 'ethereum' for Ethereum mainnet)."
+              }
+            },
+            "required": [
+              "chain_slug"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "I need to understand the details of the Ethereum blockchain for my cryptocurrency project. Can you fetch the details for 'ethereum'?"
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: I need to understand the details of the Ethereum blockchain for my cryptocurrency project. Can you fetch the details for 'ethereum'? I should call `web_chain_details` with arguments {\"chain_slug\": \"ethereum\"} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_1_0",
+            "name": "web_chain_details",
+            "input": {
+              "chain_slug": "ethereum"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_1_0",
+            "text": "{\"status\": \"success\", \"function\": \"web_chain_details\", \"arguments\": {\"chain_slug\": \"ethereum\"}, \"result\": \"<synthetic result for web_chain_details>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `web_chain_details` for your query: \"I need to understand the details of the Ethereum blockchain for my cryptocurrency project. Can you fetch the details for 'ethereum'?\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 2,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "t3ma",
+          "description": "Fetches the Triple Exponential Moving Average (T3MA) for a given financial instrument.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "str",
+                "description": "Instrument symbol, which can be any equity, index, ETF, forex, or cryptocurrency (e.g., 'AAPL', 'EUR/USD', 'ETH/BTC')."
+              },
+              "interval": {
+                "type": "str",
+                "description": "Interval between two consecutive points in the time series. Supported intervals include '1min', '5min', '15min', '30min', '45min', '1h', '2h', '4h', '1day', '1week', and '1month'."
+              },
+              "format": {
+                "type": "str",
+                "description": "Format of the response data, either 'CSV' or 'JSON'. Default is 'json'."
+              },
+              "v_factor": {
+                "type": "int",
+                "description": "Volume factor used in the calculation of the T3MA."
+              },
+              "series_type": {
+                "type": "str",
+                "description": "Type of series to use in the calculation. Supported values are 'open', 'high', 'low', and 'close'. Default is 'close'."
+              },
+              "outputsize": {
+                "type": "int",
+                "description": "Number of data points to return. Default is 30."
+              },
+              "time_period": {
+                "type": "int",
+                "description": "Number of periods over which to calculate the T3MA. Default is 9."
+              }
+            },
+            "required": [
+              "symbol",
+              "interval"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "stock_v2_get_profile",
+          "description": "Retrieves the company profile information for a given performance ID using the RapidAPI Morning Star service.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "performanceid": {
+                "type": "str",
+                "description": "The performance ID of the stock, obtained from endpoints such as /auto-complete, /get-summary, or /get-movers."
+              }
+            },
+            "required": [
+              "performanceid"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "What is the T3MA for 'ETH/BTC' using a 1h interval and a time period of 14?"
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: What is the T3MA for 'ETH/BTC' using a 1h interval and a time period of 14? I should call `t3ma` with arguments {\"symbol\": \"ETH/BTC\", \"interval\": \"1h\", \"time_period\": 14} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_2_0",
+            "name": "t3ma",
+            "input": {
+              "symbol": "ETH/BTC",
+              "interval": "1h",
+              "time_period": 14
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_2_0",
+            "text": "{\"status\": \"success\", \"function\": \"t3ma\", \"arguments\": {\"symbol\": \"ETH/BTC\", \"interval\": \"1h\", \"time_period\": 14}, \"result\": \"<synthetic result for t3ma>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `t3ma` for your query: \"What is the T3MA for 'ETH/BTC' using a 1h interval and a time period of 14?\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 3,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_animes",
+          "description": "Retrieves a list of animes based on specified search criteria and filters from the RapidAPI Anime API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "year_greater": {
+                "type": "int",
+                "description": "Find animes released after the specified year."
+              },
+              "media_type": {
+                "type": "str",
+                "description": "Filter by media type (e.g., music, tv, ona, ova, movie, special)."
+              },
+              "studio": {
+                "type": "str",
+                "description": "Filter by studio name."
+              },
+              "year_less": {
+                "type": "int",
+                "description": "Find animes released before the specified year."
+              },
+              "nsfw": {
+                "type": "str",
+                "description": "Include NSFW content if set."
+              },
+              "status": {
+                "type": "str",
+                "description": "Filter by anime status (e.g., currently_airing, finished_airing, not_yet_aired)."
+              },
+              "limit": {
+                "type": "int",
+                "description": "Limit the number of results."
+              },
+              "q": {
+                "type": "str",
+                "description": "Search for animes by title in English or Japanese."
+              },
+              "genre": {
+                "type": "str",
+                "description": "Filter by genre."
+              },
+              "sort": {
+                "type": "bool",
+                "description": "Specify sort order, True for ascending and False for descending."
+              },
+              "offset": {
+                "type": "int",
+                "description": "Number of results to skip."
+              },
+              "season": {
+                "type": "str",
+                "description": "Filter by season."
+              },
+              "fields": {
+                "type": "str",
+                "description": "Specify the fields to return (e.g., id, title, main_picture, etc.)."
+              },
+              "year_equal": {
+                "type": "int",
+                "description": "Filter by animes released in the specified year."
+              },
+              "source": {
+                "type": "str",
+                "description": "Filter by source material (e.g., manga, visual_novel, novel, etc.)."
+              },
+              "order": {
+                "type": "str",
+                "description": "Order results by a specific field."
+              }
+            },
+            "required": []
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "list_titles",
+          "description": "Fetches a listing of titles that match specified parameters from the Watchmode API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "genres": {
+                "type": "str",
+                "description": "Filter results to only include certain genre(s). Pass in a single genre ID or multiple comma-separated IDs. Default is '4,9'."
+              },
+              "limit": {
+                "type": "int",
+                "description": "Set how many titles to return per page. Default and maximum is 250."
+              },
+              "source_ids": {
+                "type": "str",
+                "description": "Filter the results to titles available on specific sources by passing individual IDs or multiple comma-separated IDs. Default is '23,206'. Note: Only a single region can be set if this is populated."
+              },
+              "source_types": {
+                "type": "str",
+                "description": "Filter results to only include titles available on specific types of sources (e.g., subscription, free). Default is 'sub,free'. Note: Only a single region can be set if this is populated."
+              },
+              "types": {
+                "type": "str",
+                "description": "Filter results to only include titles available on specific types of sources (e.g., subscription, free). Default is 'sub,free'. Note: Only a single region can be set if this is populated."
+              },
+              "regions": {
+                "type": "str",
+                "description": "Filter results to only include sources active in specific regions. Currently supported regions: US, GB, CA, AU. Default is 'US'. Note: Only a single region can be set if source_ids or source_types are populated."
+              },
+              "sort_by": {
+                "type": "str",
+                "description": "Sort order of results. Possible values include: relevance_desc, relevance_asc, popularity_desc, popularity_asc, release_date_desc, release_date_asc, title_desc, title_asc. Default is 'relevance_desc'."
+              },
+              "page": {
+                "type": "int",
+                "description": "Set the page of results to return. Default is 1."
+              },
+              "network_ids": {
+                "type": "str",
+                "description": "Filter results to titles that originally aired on specific TV networks by passing individual IDs or multiple comma-separated IDs. Default is '1,8,12'."
+              },
+              "release_date_start": {
+                "type": "int",
+                "description": "Filter results to only include titles released on or after a specific date. Format: YYYYMMDD. Default is 20010101."
+              },
+              "release_date_end": {
+                "type": "int",
+                "description": "Filter results to only include titles released on or before a specific date. Format: YYYYMMDD. Default is 20201211."
+              }
+            },
+            "required": [
+              "genres",
+              "limit",
+              "source_ids",
+              "source_types",
+              "types",
+              "regions",
+              "sort_by",
+              "page",
+              "network_ids",
+              "release_date_start",
+              "release_date_end"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "List titles originally aired on networks '1' and '8', released after 2010, sorted by release date in descending order."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: List titles originally aired on networks '1' and '8', released after 2010, sorted by release date in descending order. I should call `list_titles` with arguments {\"network_ids\": \"1,8\", \"release_date_start\": 20110101, \"sort_by\": \"release_date_desc\"} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_3_0",
+            "name": "list_titles",
+            "input": {
+              "network_ids": "1,8",
+              "release_date_start": 20110101,
+              "sort_by": "release_date_desc"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_3_0",
+            "text": "{\"status\": \"success\", \"function\": \"list_titles\", \"arguments\": {\"network_ids\": \"1,8\", \"release_date_start\": 20110101, \"sort_by\": \"release_date_desc\"}, \"result\": \"<synthetic result for list_titles>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `list_titles` for your query: \"List titles originally aired on networks '1' and '8', released after 2010, sorted by release date in descending order.\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 4,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "stagecompetitorstandings",
+          "description": "Retrieve the competitor standings for a specific Motorsport stage using the given stage ID.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "is_id": {
+                "type": "int",
+                "description": "The ID of the stage for which to retrieve competitor's standings."
+              }
+            },
+            "required": [
+              "is_id"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Fetch the competitor standings for the recently concluded stage 98765."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Fetch the competitor standings for the recently concluded stage 98765. I should call `stagecompetitorstandings` with arguments {\"is_id\": 98765} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_4_0",
+            "name": "stagecompetitorstandings",
+            "input": {
+              "is_id": 98765
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_4_0",
+            "text": "{\"status\": \"success\", \"function\": \"stagecompetitorstandings\", \"arguments\": {\"is_id\": 98765}, \"result\": \"<synthetic result for stagecompetitorstandings>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `stagecompetitorstandings` for your query: \"Fetch the competitor standings for the recently concluded stage 98765.\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 5,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_product",
+          "description": "Fetches product details from an API using the given product ID.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "is_id": {
+                "type": "int",
+                "description": "The product ID for which to retrieve details."
+              }
+            },
+            "required": [
+              "is_id"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "product_id",
+          "description": "Fetches product details from the AliExpress API using the provided product ID and optional parameters.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "is_id": {
+                "type": "int",
+                "description": "The ID of the product to fetch details for."
+              },
+              "locale": {
+                "type": "str",
+                "description": "The locale to be used for the request (e.g., 'en_US')."
+              },
+              "currency": {
+                "type": "str",
+                "description": "The currency for price conversion (e.g., 'USD')."
+              },
+              "country": {
+                "type": "str",
+                "description": "The country for regional adjustments (e.g., 'US')."
+              }
+            },
+            "required": [
+              "is_id"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Fetch details for product 456789 with locale 'es_ES'."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Fetch details for product 456789 with locale 'es_ES'. I should call `product_id` with arguments {\"is_id\": 456789, \"locale\": \"es_ES\"} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_5_0",
+            "name": "product_id",
+            "input": {
+              "is_id": 456789,
+              "locale": "es_ES"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_5_0",
+            "text": "{\"status\": \"success\", \"function\": \"product_id\", \"arguments\": {\"is_id\": 456789, \"locale\": \"es_ES\"}, \"result\": \"<synthetic result for product_id>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `product_id` for your query: \"Fetch details for product 456789 with locale 'es_ES'.\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 6,
+    "_scenario": "xlam_parallel_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_id",
+          "description": "Fetches the ID of a movie based on the given search query from the RapidAPI similar movies service.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "q": {
+                "type": "str",
+                "description": "The search string for the movie title."
+              }
+            },
+            "required": [
+              "q"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "search_torrents",
+          "description": "Search for torrents based on given keywords using the RapidAPI service.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "keywords": {
+                "type": "str",
+                "description": "Keywords to search for torrents."
+              },
+              "quantity": {
+                "type": "int",
+                "description": "Number of torrent results to return. Maximum value is 40."
+              },
+              "page": {
+                "type": "int",
+                "description": "Page number for paginated results. Defaults to 1."
+              }
+            },
+            "required": [
+              "keywords",
+              "quantity"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "basic_info",
+          "description": "Fetches detailed information about a cast member such as name, profession, birth and death year, bio, poster, and best titles.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "peopleid": {
+                "type": "str",
+                "description": "The ID of the cast member whose details are to be fetched."
+              }
+            },
+            "required": [
+              "peopleid"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Identify the ID of 'Pulp Fiction' and search for torrents related to it."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Identify the ID of 'Pulp Fiction' and search for torrents related to it. This needs 2 parallel calls: `get_id`, `search_torrents`. I'll dispatch them together."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_6_0",
+            "name": "get_id",
+            "input": {
+              "q": "Pulp Fiction"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_6_1",
+            "name": "search_torrents",
+            "input": {
+              "keywords": "Pulp Fiction",
+              "quantity": 10
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_6_0",
+            "text": "{\"status\": \"success\", \"function\": \"get_id\", \"arguments\": {\"q\": \"Pulp Fiction\"}, \"result\": \"<synthetic result for get_id>\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_6_1",
+            "text": "{\"status\": \"success\", \"function\": \"search_torrents\", \"arguments\": {\"keywords\": \"Pulp Fiction\", \"quantity\": 10}, \"result\": \"<synthetic result for search_torrents>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `get_id` and `search_torrents` for your query: \"Identify the ID of 'Pulp Fiction' and search for torrents related to it.\". The 2 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 7,
+    "_scenario": "xlam_parallel_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "time_zone_api",
+          "description": "Fetches up-to-date time zone and local time information as JSON based on a given query parameter.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "q": {
+                "type": "str",
+                "description": "Query parameter to fetch time zone data."
+              }
+            },
+            "required": [
+              "q"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Can you find the time zone for a Canadian postal code G2J and a latitude-longitude pair of 48.8567,2.3508?"
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Can you find the time zone for a Canadian postal code G2J and a latitude-longitude pair of 48.8567,2.3508? This needs 2 parallel calls: `time_zone_api`, `time_zone_api`. I'll dispatch them together."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_7_0",
+            "name": "time_zone_api",
+            "input": {
+              "q": "G2J"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_7_1",
+            "name": "time_zone_api",
+            "input": {
+              "q": "48.8567,2.3508"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_7_0",
+            "text": "{\"status\": \"success\", \"function\": \"time_zone_api\", \"arguments\": {\"q\": \"G2J\"}, \"result\": \"<synthetic result for time_zone_api>\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_7_1",
+            "text": "{\"status\": \"success\", \"function\": \"time_zone_api\", \"arguments\": {\"q\": \"48.8567,2.3508\"}, \"result\": \"<synthetic result for time_zone_api>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `time_zone_api` and `time_zone_api` for your query: \"Can you find the time zone for a Canadian postal code G2J and a latitude-longitude pair of 48.8567,2.3508?\". The 2 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 8,
+    "_scenario": "xlam_parallel_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "find_peak_element",
+          "description": "Finds a peak element in a list of integers.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "nums": {
+                "type": "List[int]",
+                "description": "The list of integers."
+              }
+            },
+            "required": [
+              "nums"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "light_travel_time",
+          "description": "Calculate the time taken for light to travel from one celestial body to another.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "distance_in_light_years": {
+                "type": "int",
+                "description": "The distance between the two celestial bodies in light years."
+              },
+              "speed_of_light": {
+                "type": "int",
+                "description": "The speed of light in vacuum, in m/s. Default value is 299792458 m/s."
+              }
+            },
+            "required": [
+              "distance_in_light_years",
+              "speed_of_light"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Determine the peak of the sequence [44, 46, 48, 50, 52] and the light travel time for 25 light years."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Determine the peak of the sequence [44, 46, 48, 50, 52] and the light travel time for 25 light years. This needs 2 parallel calls: `find_peak_element`, `light_travel_time`. I'll dispatch them together."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_8_0",
+            "name": "find_peak_element",
+            "input": {
+              "nums": [
+                44,
+                46,
+                48,
+                50,
+                52
+              ]
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_8_1",
+            "name": "light_travel_time",
+            "input": {
+              "distance_in_light_years": 25
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_8_0",
+            "text": "{\"status\": \"success\", \"function\": \"find_peak_element\", \"arguments\": {\"nums\": [44, 46, 48, 50, 52]}, \"result\": \"<synthetic result for find_peak_element>\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_8_1",
+            "text": "{\"status\": \"success\", \"function\": \"light_travel_time\", \"arguments\": {\"distance_in_light_years\": 25}, \"result\": \"<synthetic result for light_travel_time>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `find_peak_element` and `light_travel_time` for your query: \"Determine the peak of the sequence [44, 46, 48, 50, 52] and the light travel time for 25 light years.\". The 2 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 9,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "availability",
+          "description": "Checks if a given URL is archived and currently accessible in the Wayback Machine.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "str",
+                "description": "The URL to check for availability in the Wayback Machine."
+              },
+              "timestamp": {
+                "type": "str",
+                "description": "The timestamp to look up in Wayback. If not specified, the most recent available capture is returned. The format of the timestamp is 1-14 digits (YYYYMMDDhhmmss). Defaults to '20090101'."
+              },
+              "callback": {
+                "type": "str",
+                "description": "An optional callback to produce a JSONP response. Defaults to None."
+              }
+            },
+            "required": [
+              "url"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Is 'https://www.apple.com' available in the Wayback Machine on September 9, 2015?"
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Is 'https://www.apple.com' available in the Wayback Machine on September 9, 2015? I should call `availability` with arguments {\"url\": \"https://www.apple.com\", \"timestamp\": \"20150909\"} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_9_0",
+            "name": "availability",
+            "input": {
+              "url": "https://www.apple.com",
+              "timestamp": "20150909"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_9_0",
+            "text": "{\"status\": \"success\", \"function\": \"availability\", \"arguments\": {\"url\": \"https://www.apple.com\", \"timestamp\": \"20150909\"}, \"result\": \"<synthetic result for availability>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `availability` for your query: \"Is 'https://www.apple.com' available in the Wayback Machine on September 9, 2015?\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 10,
+    "_scenario": "xlam_parallel_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "poor_backlinks",
+          "description": "Fetch poor quality backlinks for a given domain using the Best Backlink Checker API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "domain": {
+                "type": "str",
+                "description": "The domain for which to fetch the poor quality backlinks."
+              }
+            },
+            "required": [
+              "domain"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_random_user",
+          "description": "Fetch a random user profile based on specified criteria using the ai-random-user-generator API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "results": {
+                "type": "str",
+                "description": "Number of user profiles to fetch. Default is '7'."
+              },
+              "nation": {
+                "type": "str",
+                "description": "Nationality of the users. Default is 'en_US'."
+              },
+              "gender": {
+                "type": "str",
+                "description": "Gender of the users. Default is 'female'."
+              }
+            },
+            "required": [
+              "results",
+              "nation",
+              "gender"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "company_search",
+          "description": "Search for companies by name using the Indeed API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "company_name": {
+                "type": "str",
+                "description": "The name of the company to search for."
+              },
+              "locality": {
+                "type": "str",
+                "description": "Select the Indeed's country subdomain to search within. The default value is 'us'."
+              }
+            },
+            "required": [
+              "company_name"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "album_tracks",
+          "description": "Fetches the tracks of a specified album from the Spotify API using RapidAPI.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "is_id": {
+                "type": "str",
+                "description": "The unique identifier for the album."
+              },
+              "offset": {
+                "type": "int",
+                "description": "The starting point for the track list. Defaults to 0."
+              },
+              "limit": {
+                "type": "int",
+                "description": "The maximum number of tracks to return. Defaults to 300."
+              }
+            },
+            "required": [
+              "is_id"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "qrcode",
+          "description": "Generate a QR code based on the provided data string using the QR Code Generator API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "str",
+                "description": "The input data to be converted into a QR code."
+              }
+            },
+            "required": [
+              "data"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Can you fetch poor quality backlinks for the domain 'example.com'? Also, generate a QR code for the text 'Visit our website at example.com'."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Can you fetch poor quality backlinks for the domain 'example.com'? Also, generate a QR code for the text 'Visit our website at example.com'. This needs 2 parallel calls: `poor_backlinks`, `qrcode`. I'll dispatch them together."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_10_0",
+            "name": "poor_backlinks",
+            "input": {
+              "domain": "example.com"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_10_1",
+            "name": "qrcode",
+            "input": {
+              "data": "Visit our website at example.com"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_10_0",
+            "text": "{\"status\": \"success\", \"function\": \"poor_backlinks\", \"arguments\": {\"domain\": \"example.com\"}, \"result\": \"<synthetic result for poor_backlinks>\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_10_1",
+            "text": "{\"status\": \"success\", \"function\": \"qrcode\", \"arguments\": {\"data\": \"Visit our website at example.com\"}, \"result\": \"<synthetic result for qrcode>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `poor_backlinks` and `qrcode` for your query: \"Can you fetch poor quality backlinks for the domain 'example.com'? Also, generate a QR code for the text 'Visit our website at example.com'.\". The 2 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 11,
+    "_scenario": "xlam_parallel_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "auto_complete_deprecating",
+          "description": "Fetch auto-complete suggestions for a given query from the specified API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "str",
+                "description": "The term or phrase for which to get suggestions."
+              }
+            },
+            "required": [
+              "query"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "auto_complete",
+          "description": "Fetch auto-complete suggestions for a given query using the Wayfair API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "str",
+                "description": "The term or phrase for which auto-complete suggestions are needed."
+              }
+            },
+            "required": [
+              "query"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Fetch auto-complete results for 'winter coat' from Kohls and 'kitchen appliance' from Wayfair."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Fetch auto-complete results for 'winter coat' from Kohls and 'kitchen appliance' from Wayfair. This needs 2 parallel calls: `auto_complete_deprecating`, `auto_complete`. I'll dispatch them together."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_11_0",
+            "name": "auto_complete_deprecating",
+            "input": {
+              "query": "winter coat"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_11_1",
+            "name": "auto_complete",
+            "input": {
+              "query": "kitchen appliance"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_11_0",
+            "text": "{\"status\": \"success\", \"function\": \"auto_complete_deprecating\", \"arguments\": {\"query\": \"winter coat\"}, \"result\": \"<synthetic result for auto_complete_deprecating>\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_11_1",
+            "text": "{\"status\": \"success\", \"function\": \"auto_complete\", \"arguments\": {\"query\": \"kitchen appliance\"}, \"result\": \"<synthetic result for auto_complete>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `auto_complete_deprecating` and `auto_complete` for your query: \"Fetch auto-complete results for 'winter coat' from Kohls and 'kitchen appliance' from Wayfair.\". The 2 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 12,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "matchschedules",
+          "description": "Fetches the schedules of ice hockey matches for a specified date, including match timings, teams, and other relevant information.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "day": {
+                "type": "int",
+                "description": "The day of the month for which you want to retrieve the schedules (1-31)."
+              },
+              "year": {
+                "type": "int",
+                "description": "The year for which you want to retrieve the schedules (e.g., 2022)."
+              },
+              "month": {
+                "type": "int",
+                "description": "The month for which you want to retrieve the schedules (1-12)."
+              }
+            },
+            "required": [
+              "day",
+              "year",
+              "month"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "I need the schedules of matches happening on February 28, 2024."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: I need the schedules of matches happening on February 28, 2024. I should call `matchschedules` with arguments {\"day\": 28, \"month\": 2, \"year\": 2024} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_12_0",
+            "name": "matchschedules",
+            "input": {
+              "day": 28,
+              "month": 2,
+              "year": 2024
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_12_0",
+            "text": "{\"status\": \"success\", \"function\": \"matchschedules\", \"arguments\": {\"day\": 28, \"month\": 2, \"year\": 2024}, \"result\": \"<synthetic result for matchschedules>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `matchschedules` for your query: \"I need the schedules of matches happening on February 28, 2024.\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 13,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_ip_location",
+          "description": "Retrieves the latitude and longitude coordinates of a given IP address using the ip-api.com API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "ip": {
+                "type": "str",
+                "description": "The IP address to locate."
+              }
+            },
+            "required": [
+              "ip"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "structural_analysis",
+          "description": "Performs structural analysis on a building based on its ID, floor numbers, and analysis mode.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "building_id": {
+                "type": "str",
+                "description": "The unique identifier of the building."
+              },
+              "floor_numbers": {
+                "type": "List[int]",
+                "description": "The list of floor numbers to be analyzed."
+              },
+              "analysis_mode": {
+                "type": "str",
+                "description": "The mode of analysis, either \"static\" or \"dynamic\". Defaults to \"static\"."
+              }
+            },
+            "required": [
+              "building_id",
+              "floor_numbers"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "reserve_hotel_room",
+          "description": "Reserves a hotel room with the specified details.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "room_type": {
+                "type": "str",
+                "description": "The type of room to reserve."
+              },
+              "nightly_rate": {
+                "type": "float",
+                "description": "The nightly rate for the room."
+              },
+              "checkin_date": {
+                "type": "str",
+                "description": "The check-in date in the format 'YYYY-MM-DD'."
+              },
+              "checkout_date": {
+                "type": "str",
+                "description": "The check-out date in the format 'YYYY-MM-DD'."
+              },
+              "guest_id": {
+                "type": "str",
+                "description": "The unique identifier for the guest."
+              },
+              "promo_code": {
+                "type": "str",
+                "description": "A promotional code for a discount. Defaults to None."
+              }
+            },
+            "required": [
+              "room_type",
+              "nightly_rate",
+              "checkin_date",
+              "checkout_date",
+              "guest_id"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "simulate_query_database",
+          "description": "Simulates querying a database based on certain conditions.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "table": {
+                "type": "str",
+                "description": "Name of the table to query."
+              },
+              "conditions": {
+                "type": "list",
+                "description": "Conditions for the query, each condition is a dictionary."
+              }
+            },
+            "required": [
+              "table",
+              "conditions"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "place_safeway_order",
+          "description": "Order specified items from a Safeway location.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "str",
+                "description": "The location of the Safeway store, e.g., 'Palo Alto, CA'."
+              },
+              "items": {
+                "type": "list",
+                "description": "List of items to order."
+              },
+              "quantity": {
+                "type": "list",
+                "description": "Quantity of each item in the order list."
+              }
+            },
+            "required": [
+              "location",
+              "items",
+              "quantity"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "I need to order 3 cartons of milk and 2 loaves of bread from the Safeway in Palo Alto, CA. Can you handle that?"
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: I need to order 3 cartons of milk and 2 loaves of bread from the Safeway in Palo Alto, CA. Can you handle that? I should call `place_safeway_order` with arguments {\"location\": \"Palo Alto, CA\", \"items\": [\"milk\", \"bread\"], \"quantity\": [3, 2]} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_13_0",
+            "name": "place_safeway_order",
+            "input": {
+              "location": "Palo Alto, CA",
+              "items": [
+                "milk",
+                "bread"
+              ],
+              "quantity": [
+                3,
+                2
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_13_0",
+            "text": "{\"status\": \"success\", \"function\": \"place_safeway_order\", \"arguments\": {\"location\": \"Palo Alto, CA\", \"items\": [\"milk\", \"bread\"], \"quantity\": [3, 2]}, \"result\": \"<synthetic result for place_safeway_order>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `place_safeway_order` for your query: \"I need to order 3 cartons of milk and 2 loaves of bread from the Safeway in Palo Alto, CA. Can you handle that?\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 14,
+    "_scenario": "xlam_parallel_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_search_user",
+          "description": "Fetches the search result for a specific username from the TikTok User API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "is_id": {
+                "type": "str",
+                "description": "The username or ID to search for."
+              }
+            },
+            "required": [
+              "is_id"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "You are researching TikTok trends and need to look up the profiles of 'trendsetter1' and 'viralvideo2'. How would you implement this using the 'get_search_user' function?"
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: You are researching TikTok trends and need to look up the profiles of 'trendsetter1' and 'viralvideo2'. How would you implement this using the 'get_search_user' function? This needs 2 parallel calls: `get_search_user`, `get_search_user`. I'll dispatch them together."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_14_0",
+            "name": "get_search_user",
+            "input": {
+              "is_id": "trendsetter1"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_14_1",
+            "name": "get_search_user",
+            "input": {
+              "is_id": "viralvideo2"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_14_0",
+            "text": "{\"status\": \"success\", \"function\": \"get_search_user\", \"arguments\": {\"is_id\": \"trendsetter1\"}, \"result\": \"<synthetic result for get_search_user>\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_14_1",
+            "text": "{\"status\": \"success\", \"function\": \"get_search_user\", \"arguments\": {\"is_id\": \"viralvideo2\"}, \"result\": \"<synthetic result for get_search_user>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `get_search_user` and `get_search_user` for your query: \"You are researching TikTok trends and need to look up the profiles of 'trendsetter1' and 'viralvideo2'. How would you implement this using the 'get_search_user' function?\". The 2 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 15,
+    "_scenario": "xlam_parallel_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_post",
+          "description": "Fetches the details of a TikTok post using the given `aweme_id` via the RapidAPI service.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "aweme_id": {
+                "type": "str",
+                "description": "The unique identifier of the TikTok post to be fetched."
+              }
+            },
+            "required": [
+              "aweme_id"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "hashtag_feed_video_posts_v2",
+          "description": "Fetches video posts related to a specific hashtag from a social media platform, providing metadata such as direct URLs, statistics, and more.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "str",
+                "description": "Hashtag name to filter videos. Defaults to 'summer'."
+              },
+              "limit": {
+                "type": "int",
+                "description": "Maximum number of records to return. Defaults to 20; the maximum is 20."
+              },
+              "max_cursor": {
+                "type": "str",
+                "description": "Pagination cursor to fetch more videos. Use the value received from the previous request for continued pagination."
+              }
+            },
+            "required": []
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Could you find the details of the TikTok post with the ID '6923456789012345678'? Also, provide me with the latest posts under '#technology'."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Could you find the details of the TikTok post with the ID '6923456789012345678'? Also, provide me with the latest posts under '#technology'. This needs 2 parallel calls: `get_post`, `hashtag_feed_video_posts_v2`. I'll dispatch them together."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_15_0",
+            "name": "get_post",
+            "input": {
+              "aweme_id": "6923456789012345678"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_15_1",
+            "name": "hashtag_feed_video_posts_v2",
+            "input": {
+              "name": "technology"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_15_0",
+            "text": "{\"status\": \"success\", \"function\": \"get_post\", \"arguments\": {\"aweme_id\": \"6923456789012345678\"}, \"result\": \"<synthetic result for get_post>\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_15_1",
+            "text": "{\"status\": \"success\", \"function\": \"hashtag_feed_video_posts_v2\", \"arguments\": {\"name\": \"technology\"}, \"result\": \"<synthetic result for hashtag_feed_video_posts_v2>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `get_post` and `hashtag_feed_video_posts_v2` for your query: \"Could you find the details of the TikTok post with the ID '6923456789012345678'? Also, provide me with the latest posts under '#technology'.\". The 2 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 16,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_meta_data",
+          "description": "Fetches meta data from the cryptocurrency markets API using provided locale information and optional parameters.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "locale_info": {
+                "type": "str",
+                "description": "The language code."
+              },
+              "lang_id": {
+                "type": "int",
+                "description": "The language ID, default is 1."
+              },
+              "time_utc_offset": {
+                "type": "int",
+                "description": "The UTC offset in seconds, default is 28800 (UTC+8)."
+              }
+            },
+            "required": [
+              "locale_info"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Please get the meta data for cryptocurrency markets in French (France) with UTC+1 offset."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Please get the meta data for cryptocurrency markets in French (France) with UTC+1 offset. I should call `get_meta_data` with arguments {\"locale_info\": \"fr-FR\", \"time_utc_offset\": 3600} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_16_0",
+            "name": "get_meta_data",
+            "input": {
+              "locale_info": "fr-FR",
+              "time_utc_offset": 3600
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_16_0",
+            "text": "{\"status\": \"success\", \"function\": \"get_meta_data\", \"arguments\": {\"locale_info\": \"fr-FR\", \"time_utc_offset\": 3600}, \"result\": \"<synthetic result for get_meta_data>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `get_meta_data` for your query: \"Please get the meta data for cryptocurrency markets in French (France) with UTC+1 offset.\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 17,
+    "_scenario": "xlam_parallel_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_highlight_item",
+          "description": "Fetch the highlight item from Instagram using the toolbench RapidAPI.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "is_id": {
+                "type": "str",
+                "description": "The Instagram ID for which to fetch the highlight items."
+              }
+            },
+            "required": [
+              "is_id"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "channel_shorts",
+          "description": "Fetch the latest shorts published by a YouTube channel using the provided `channel_id` and RapidAPI key.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "channel_id": {
+                "type": "str",
+                "description": "The ID of the YouTube channel."
+              }
+            },
+            "required": [
+              "channel_id"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Retrieve the highlight items for 'art_collector' on Instagram and the shorts from 'HistoryBuffs' on YouTube."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Retrieve the highlight items for 'art_collector' on Instagram and the shorts from 'HistoryBuffs' on YouTube. This needs 2 parallel calls: `get_highlight_item`, `channel_shorts`. I'll dispatch them together."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_17_0",
+            "name": "get_highlight_item",
+            "input": {
+              "is_id": "art_collector"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_17_1",
+            "name": "channel_shorts",
+            "input": {
+              "channel_id": "HistoryBuffs"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_17_0",
+            "text": "{\"status\": \"success\", \"function\": \"get_highlight_item\", \"arguments\": {\"is_id\": \"art_collector\"}, \"result\": \"<synthetic result for get_highlight_item>\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_17_1",
+            "text": "{\"status\": \"success\", \"function\": \"channel_shorts\", \"arguments\": {\"channel_id\": \"HistoryBuffs\"}, \"result\": \"<synthetic result for channel_shorts>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `get_highlight_item` and `channel_shorts` for your query: \"Retrieve the highlight items for 'art_collector' on Instagram and the shorts from 'HistoryBuffs' on YouTube.\". The 2 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 18,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "calculate_standard_deviation",
+          "description": "Calculates the standard deviation of a list of numbers.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "numbers": {
+                "type": "List[Union[int",
+                "description": "The list of numbers."
+              }
+            },
+            "required": [
+              "numbers"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "future_investment_value",
+          "description": "Calculates the future value of an investment based on the present value, annual interest rate, and number of years.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "present_value": {
+                "type": "float",
+                "description": "The present value of the investment."
+              },
+              "annual_interest_rate": {
+                "type": "float",
+                "description": "The annual interest rate as a decimal (e.g., 0.05 for 5%)."
+              },
+              "years": {
+                "type": "int",
+                "description": "The number of years the investment will grow."
+              }
+            },
+            "required": [
+              "present_value",
+              "annual_interest_rate",
+              "years"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Future value of 2000 dollars at 2% for 8 years?"
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Future value of 2000 dollars at 2% for 8 years? I should call `future_investment_value` with arguments {\"present_value\": 2000, \"annual_interest_rate\": 0.02, \"years\": 8} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_18_0",
+            "name": "future_investment_value",
+            "input": {
+              "present_value": 2000,
+              "annual_interest_rate": 0.02,
+              "years": 8
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_18_0",
+            "text": "{\"status\": \"success\", \"function\": \"future_investment_value\", \"arguments\": {\"present_value\": 2000, \"annual_interest_rate\": 0.02, \"years\": 8}, \"result\": \"<synthetic result for future_investment_value>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `future_investment_value` for your query: \"Future value of 2000 dollars at 2% for 8 years?\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 19,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_all_bodies_positions",
+          "description": "Fetches the positions of celestial bodies for a given location and date range using the Astronomy API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "latitude": {
+                "type": "int",
+                "description": "The latitude of the location for which to get the positions."
+              },
+              "longitude": {
+                "type": "int",
+                "description": "The longitude of the location for which to get the positions."
+              },
+              "from_date": {
+                "type": "str",
+                "description": "The start date for the observation period in the format 'YYYY-MM-DD'."
+              },
+              "to_date": {
+                "type": "str",
+                "description": "The end date for the observation period in the format 'YYYY-MM-DD'."
+              },
+              "elevation": {
+                "type": "int",
+                "description": "The elevation of the location in meters. Defaults to 166."
+              },
+              "time": {
+                "type": "str",
+                "description": "The specific time of day for the observation in the format 'HH:MM:SS'. Defaults to '12:00:00'."
+              }
+            },
+            "required": [
+              "latitude",
+              "longitude",
+              "from_date",
+              "to_date"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "For a star party in Cape Town on April 10th, 2023, at 10 PM, what celestial bodies will be in the sky?"
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: For a star party in Cape Town on April 10th, 2023, at 10 PM, what celestial bodies will be in the sky? I should call `get_all_bodies_positions` with arguments {\"latitude\": -34, \"longitude\": 18, \"from_date\": \"2023-04-10\", \"to_date\": \"2023-04-10\", \"time\": \"22:00:00\"} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_19_0",
+            "name": "get_all_bodies_positions",
+            "input": {
+              "latitude": -34,
+              "longitude": 18,
+              "from_date": "2023-04-10",
+              "to_date": "2023-04-10",
+              "time": "22:00:00"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_19_0",
+            "text": "{\"status\": \"success\", \"function\": \"get_all_bodies_positions\", \"arguments\": {\"latitude\": -34, \"longitude\": 18, \"from_date\": \"2023-04-10\", \"to_date\": \"2023-04-10\", \"time\": \"22:00:00\"}, \"result\": \"<synthetic result for get_all_bodies_positions>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `get_all_bodies_positions` for your query: \"For a star party in Cape Town on April 10th, 2023, at 10 PM, what celestial bodies will be in the sky?\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 20,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "binary_addition",
+          "description": "Adds two binary numbers and returns the result as a binary string.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "a": {
+                "type": "str",
+                "description": "The first binary number."
+              },
+              "b": {
+                "type": "str",
+                "description": "The second binary number."
+              }
+            },
+            "required": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "create_histogram",
+          "description": "Create a histogram based on provided data.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "list",
+                "description": "The data for which histogram needs to be plotted."
+              },
+              "bins": {
+                "type": "int",
+                "description": "The number of equal-width bins in the range. Default is 10."
+              }
+            },
+            "required": [
+              "data",
+              "bins"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "What is the binary sum of 10010 and 11101?"
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: What is the binary sum of 10010 and 11101? I should call `binary_addition` with arguments {\"a\": \"10010\", \"b\": \"11101\"} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_20_0",
+            "name": "binary_addition",
+            "input": {
+              "a": "10010",
+              "b": "11101"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_20_0",
+            "text": "{\"status\": \"success\", \"function\": \"binary_addition\", \"arguments\": {\"a\": \"10010\", \"b\": \"11101\"}, \"result\": \"<synthetic result for binary_addition>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `binary_addition` for your query: \"What is the binary sum of 10010 and 11101?\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 21,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "facebook_ad_copy",
+          "description": "Generates a Facebook ad copy using AI based on the provided description and name.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "str",
+                "description": "The description to be used for generating the ad copy."
+              },
+              "name": {
+                "type": "str",
+                "description": "The name to be used for generating the ad copy."
+              }
+            },
+            "required": [
+              "description",
+              "name"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_product",
+          "description": "Fetches product details from a RapidAPI endpoint using the provided product ID and RapidAPI key.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "is_id": {
+                "type": "int",
+                "description": "The ID of the product to retrieve information about."
+              }
+            },
+            "required": [
+              "is_id"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Fetch detailed information about a product with ID 12345."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Fetch detailed information about a product with ID 12345. I should call `get_product` with arguments {\"is_id\": 12345} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_21_0",
+            "name": "get_product",
+            "input": {
+              "is_id": 12345
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_21_0",
+            "text": "{\"status\": \"success\", \"function\": \"get_product\", \"arguments\": {\"is_id\": 12345}, \"result\": \"<synthetic result for get_product>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `get_product` for your query: \"Fetch detailed information about a product with ID 12345.\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 22,
+    "_scenario": "xlam_single_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "recommend",
+          "description": "Fetches a recommendation for a given experiment ID using the Toolbench RapidAPI service.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "experiment_id": {
+                "type": "int",
+                "description": "The ID of the experiment for which to fetch recommendations."
+              }
+            },
+            "required": [
+              "experiment_id"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Could you fetch recommendations for experiment 24680 in the technology sector to improve user experience?"
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Could you fetch recommendations for experiment 24680 in the technology sector to improve user experience? I should call `recommend` with arguments {\"experiment_id\": 24680} to answer."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_22_0",
+            "name": "recommend",
+            "input": {
+              "experiment_id": 24680
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_22_0",
+            "text": "{\"status\": \"success\", \"function\": \"recommend\", \"arguments\": {\"experiment_id\": 24680}, \"result\": \"<synthetic result for recommend>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `recommend` for your query: \"Could you fetch recommendations for experiment 24680 in the technology sector to improve user experience?\". The 1 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 23,
+    "_scenario": "xlam_parallel_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "location",
+          "description": "Fetches the location and venue details of the NCAA Final Four event for a given identifier.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "identifier": {
+                "type": "str",
+                "description": "A unique identifier representing the year or specific event to retrieve location details for."
+              }
+            },
+            "required": [
+              "identifier"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "uniquestageimage",
+          "description": "Retrieves the image for a specific Motorsport unique stage using the provided stage ID.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "is_id": {
+                "type": "int",
+                "description": "The unique stage ID for which to retrieve the image."
+              }
+            },
+            "required": [
+              "is_id"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "pitstopdataforarace",
+          "description": "Retrieves pit stop data for a specific Formula 1 race using the provided year and round.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": "str",
+                "description": "The season year of the Formula 1 race."
+              },
+              "round": {
+                "type": "str",
+                "description": "The round number of the Formula 1 race."
+              }
+            },
+            "required": [
+              "year",
+              "round"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "search_team",
+          "description": "Searches for a team using the provided team name and returns the response from the API.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "str",
+                "description": "The name of the team to search for."
+              }
+            },
+            "required": [
+              "name"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Can you fetch the location details for the NCAA Final Four event in 2019? Also, provide the unique stage image for the 5th stage in the Motorsport API."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: Can you fetch the location details for the NCAA Final Four event in 2019? Also, provide the unique stage image for the 5th stage in the Motorsport API. This needs 2 parallel calls: `location`, `uniquestageimage`. I'll dispatch them together."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_23_0",
+            "name": "location",
+            "input": {
+              "identifier": "2019"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_23_1",
+            "name": "uniquestageimage",
+            "input": {
+              "is_id": 5
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_23_0",
+            "text": "{\"status\": \"success\", \"function\": \"location\", \"arguments\": {\"identifier\": \"2019\"}, \"result\": \"<synthetic result for location>\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_23_1",
+            "text": "{\"status\": \"success\", \"function\": \"uniquestageimage\", \"arguments\": {\"is_id\": 5}, \"result\": \"<synthetic result for uniquestageimage>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `location` and `uniquestageimage` for your query: \"Can you fetch the location details for the NCAA Final Four event in 2019? Also, provide the unique stage image for the 5th stage in the Motorsport API.\". The 2 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "xlam",
+    "_xlam_id": 24,
+    "_scenario": "xlam_parallel_tool_call",
+    "system": "You are a helpful assistant with access to a set of functions. When you need information, call the appropriate function using the provided tools. Think step by step before calling, then summarize the result for the user.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "choice_endpoint",
+          "description": "Sends a GET request to the Rock-Paper-Scissors API with the user's choice and returns the API's response.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "choice": {
+                "type": "str",
+                "description": "The user's selection, either \"rock\", \"paper\", or \"scissors\"."
+              }
+            },
+            "required": [
+              "choice"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "video_comments",
+          "description": "Fetches comments for a specified YouTube video using the RapidAPI service.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "cursor": {
+                "type": "str",
+                "description": "Cursor token for pagination."
+              },
+              "gl": {
+                "type": "str",
+                "description": "Geolocation code. Defaults to 'US'."
+              },
+              "is_id": {
+                "type": "str",
+                "description": "YouTube video ID. Defaults to 'kJQP7kiw5Fk'."
+              },
+              "hl": {
+                "type": "str",
+                "description": "Language code. Defaults to 'en'."
+              }
+            },
+            "required": []
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "In a Rock-Paper-Scissors game, what does the API say when I choose 'rock'? Furthermore, fetch comments for the video 'L0p3kJQP7kiw5Fk' with a US geolocation."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user is asking: In a Rock-Paper-Scissors game, what does the API say when I choose 'rock'? Furthermore, fetch comments for the video 'L0p3kJQP7kiw5Fk' with a US geolocation. This needs 2 parallel calls: `choice_endpoint`, `video_comments`. I'll dispatch them together."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_24_0",
+            "name": "choice_endpoint",
+            "input": {
+              "choice": "rock"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_xlam_24_1",
+            "name": "video_comments",
+            "input": {
+              "is_id": "L0p3kJQP7kiw5Fk",
+              "gl": "US"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_24_0",
+            "text": "{\"status\": \"success\", \"function\": \"choice_endpoint\", \"arguments\": {\"choice\": \"rock\"}, \"result\": \"<synthetic result for choice_endpoint>\"}"
+          },
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_xlam_24_1",
+            "text": "{\"status\": \"success\", \"function\": \"video_comments\", \"arguments\": {\"is_id\": \"L0p3kJQP7kiw5Fk\", \"gl\": \"US\"}, \"result\": \"<synthetic result for video_comments>\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Here are the results from `choice_endpoint` and `video_comments` for your query: \"In a Rock-Paper-Scissors game, what does the API say when I choose 'rock'? Furthermore, fetch comments for the video 'L0p3kJQP7kiw5Fk' with a US geolocation.\". The 2 call(s) completed successfully and the data above answers your question."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_source": "synthetic",
+    "_xlam_id": 25,
+    "_scenario": "parallel_separate_tool_msgs",
+    "system": "You are a helpful assistant with access to functions.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "search_web",
+          "description": "Search the web for information about a topic.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "The search query."
+              }
+            },
+            "required": [
+              "query"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_weather",
+          "description": "Get the current weather for a city.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string",
+                "description": "City name."
+              }
+            },
+            "required": [
+              "city"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Search for information about the Eiffel Tower and get the weather in Paris."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user wants two things: web search about Eiffel Tower and weather in Paris. I will call both tools in parallel."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_pa1",
+            "name": "search_web",
+            "input": {
+              "query": "Eiffel Tower history and facts"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "call_pa2",
+            "name": "get_weather",
+            "input": {
+              "city": "Paris"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_pa1",
+            "text": "<synthetic result> The Eiffel Tower is a wrought-iron lattice tower built in 1889 for the World's Fair in Paris. It stands 330 metres tall. </synthetic result>"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_pa2",
+            "text": "<synthetic result> Paris weather: 18°C, partly cloudy. </synthetic result>"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "content": "The Eiffel Tower was built in 1889 and stands 330 metres tall. The current weather in Paris is 18°C and partly cloudy."
+      }
+    ]
+  },
+  {
+    "_source": "synthetic",
+    "_xlam_id": 26,
+    "_scenario": "sequential_multi_turn",
+    "system": "You are a helpful assistant with access to functions.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "search_web",
+          "description": "Search the web for information about a topic.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "The search query."
+              }
+            },
+            "required": [
+              "query"
+            ]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "First search for information about Rome, then search for information about Athens."
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "The user wants sequential searches. I will start with Rome."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_sq1",
+            "name": "search_web",
+            "input": {
+              "query": "Rome city overview history"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_sq1",
+            "text": "<synthetic result> Rome is the capital of Italy, known for the Colosseum, Vatican, and rich ancient history. </synthetic result>"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "Got Rome info. Now searching for Athens."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_sq2",
+            "name": "search_web",
+            "input": {
+              "query": "Athens city overview history"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_sq2",
+            "text": "<synthetic result> Athens is the capital of Greece, birthplace of democracy and Western philosophy. </synthetic result>"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "content": "Rome is Italy's capital famous for the Colosseum and ancient history. Athens is Greece's capital and the birthplace of democracy and Western philosophy."
+      }
+    ]
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "_description": "Step C minimal Llama3 fixture: single-turn plain-text user+assistant. Drives the registry + dispatch wiring proof for Llama3Encoder. No system, no tools, no thinking, no tool_calls.",
+  "family": "llama3",
+  "tokenizer_path": "tests/fixtures/tokenizers/llama3",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "What is 2+2?"},
+      {"role": "assistant", "content": "2+2 equals 4."}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true
+  }
+}

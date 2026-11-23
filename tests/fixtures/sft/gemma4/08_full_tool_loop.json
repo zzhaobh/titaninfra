@@ -1,0 +1,42 @@
+{
+  "_description": "End-to-end loop: tools header + user + asst(text+tool_call) + tool_response + asst(final text). Exercises every branch in one fixture so a regression in any single branch fails this test even if 05/06/07 pass independently.",
+  "family": "gemma4",
+  "tokenizer_path": "tests/fixtures/tokenizers/gemma4",
+  "sample": {
+    "system": "You are a helpful assistant with tool access.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_weather",
+          "description": "Get current weather for a city.",
+          "parameters": {
+            "type": "object",
+            "properties": {"city": {"type": "string"}},
+            "required": ["city"]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {"role": "user", "content": "Weather in Tokyo and SF?"},
+      {
+        "role": "assistant",
+        "blocks": [
+          {"type": "text", "text": "Let me check both."},
+          {"type": "tool_use", "name": "get_weather", "input": {"city": "Tokyo"}, "id": "c0"},
+          {"type": "tool_use", "name": "get_weather", "input": {"city": "SF"}, "id": "c1"}
+        ]
+      },
+      {"role": "tool", "content": "{\"temp_c\": 18}", "tool_call_id": "c0"},
+      {"role": "tool", "content": "{\"temp_c\": 14}", "tool_call_id": "c1"},
+      {"role": "assistant", "content": "Tokyo is 18°C, SF is 14°C."}
+    ]
+  },
+  "max_length": 512,
+  "expected": {
+    "oracle_ok": false,
+    "first_divergence": 73,
+    "notes": "DELIBERATE DIVERGENCE (native > jinja oracle). L1 input_ids byte-identical; L2 labels diverge at idx 73. The native Segment encoder TRAINS the parallel tool_call bodies + post-tool assistant text — class-B model-generated content. The legacy offset-masking oracle MASKED them via the continue_same_model_turn boundary-collapse bug. The Segment encoder is structurally correct. See docs/superpowers/specs/2026-06-07-gemma4-native-segment-encoder-design.md."
+  }
+}

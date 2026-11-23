@@ -1,0 +1,16 @@
+{
+  "_description": "DSv3 fixture: system prompt + single-turn user/assistant. Verifies the BOS+system prologue (system content concatenated raw between BOS and the first user marker, no role markers).",
+  "family": "deepseek_v3",
+  "tokenizer_path": "tests/fixtures/tokenizers/deepseek_v3",
+  "sample": {
+    "messages": [
+      {"role": "system", "content": "You are a concise math tutor."},
+      {"role": "user", "content": "What is 2+2?"},
+      {"role": "assistant", "content": "4."}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true
+  }
+}

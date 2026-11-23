@@ -1,0 +1,35 @@
+{
+  "_comment": "TitanInfra-native SFTSample for DSV3 case 2: system + multi-turn (2 assistant turns), no thinking. Validates BOS+system rendering and multi-turn boundary detection.",
+  "messages": [
+    {
+      "role": "system",
+      "blocks": [
+        {"type": "text", "text": "You are a concise math tutor. Answer in one sentence."}
+      ]
+    },
+    {
+      "role": "user",
+      "blocks": [
+        {"type": "text", "text": "What is 7 times 8?"}
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "text", "text": "56"}
+      ]
+    },
+    {
+      "role": "user",
+      "blocks": [
+        {"type": "text", "text": "And 9 times 9?"}
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "text", "text": "81"}
+      ]
+    }
+  ]
+}

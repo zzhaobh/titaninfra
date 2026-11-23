@@ -1,0 +1,36 @@
+{
+  "_scenario": "weight_per_message",
+  "_variant": "adversarial",
+  "_description": "User message with weight=1 (only meaningful under train_on_inputs=True semantics).",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "loss_weight_per_message"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "weight": 1,
+        "blocks": [
+          {
+            "type": "text",
+            "text": "train on this user turn too"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "weight": 1,
+        "blocks": [
+          {
+            "type": "text",
+            "text": "ok"
+          }
+        ]
+      }
+    ]
+  }
+}

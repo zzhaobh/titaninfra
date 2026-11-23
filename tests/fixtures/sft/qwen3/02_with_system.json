@@ -1,0 +1,17 @@
+{
+  "_description": "M1.3 Qwen3 fixture: system prompt + single-turn user/assistant. Verifies system pass-through through dispatch -> Qwen3Encoder -> tokenize_with_hf_template. No thinking, no tools. Last-assistant empty <think>\\n\\n</think> injection is preserved as baseline (M2 must match Jinja bit-for-bit for plain text including this injection).",
+  "family": "qwen3",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen3",
+  "sample": {
+    "messages": [
+      {"role": "system", "content": "You are a concise math tutor."},
+      {"role": "user", "content": "What is 2+2?"},
+      {"role": "assistant", "content": "4."}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "No known Jinja quirk for system+plain-text. M2 token-first builder must produce bit-identical output."
+  }
+}

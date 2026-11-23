@@ -1,0 +1,43 @@
+{
+  "_scenario": "weight_per_block",
+  "_variant": "adversarial",
+  "_description": "Every block has an explicit weight — exhaustive control overrides defaults.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "loss_weight_per_block",
+    "thinking_current_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "ping",
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "trivial",
+            "weight": 0.2
+          },
+          {
+            "type": "text",
+            "text": "pong",
+            "weight": 1.0
+          }
+        ]
+      }
+    ]
+  }
+}

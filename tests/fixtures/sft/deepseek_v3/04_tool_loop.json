@@ -1,0 +1,21 @@
+{
+  "_description": "DSv3 fixture: full tool loop. Assistant emits one tool_call (content=null branch), tool replies, follow-up assistant uses the post-tool branch (<｜tool▁outputs▁end｜> instead of <｜Assistant｜>).",
+  "family": "deepseek_v3",
+  "tokenizer_path": "tests/fixtures/tokenizers/deepseek_v3",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "weather?"},
+      {"role": "assistant", "blocks": [
+        {"type": "tool_use", "name": "get_weather", "input": {"city": "SF"}, "id": "call_0"}
+      ]},
+      {"role": "tool", "content": "sunny", "tool_call_id": "call_0"},
+      {"role": "assistant", "content": "It is sunny."}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": false,
+    "first_divergence": 24,
+    "notes": "DELIBERATE divergence from jinja (audit #3, 2026-06-06): jinja's crude 'whole assistant span = loss' mask trains the framework-injected <｜tool▁outputs▁begin｜> delimiter (idx 24); native correctly masks it (class-A PROTOCOL — the model never autonomously emits the outputs-begin frame). L1 (input_ids) is byte-identical; only L2 (labels) diverges at idx 24. Also verifies (a) tool_call branch when content=null, (b) is_tool state machine suppressing <｜Assistant｜> on post-tool assistant turn."
+  }
+}

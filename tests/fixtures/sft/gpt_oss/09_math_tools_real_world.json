@@ -1,0 +1,85 @@
+{
+  "_description": "Real-world math TIR sample from data/math_tools/math_tools.jsonl. UARA shape: user -> assistant(thinking+tool_use) -> tool(tool_result) -> assistant(thinking+final). Uses OpenAI-nested tools schema to match jinja oracle expectations (jinja templates assume tool.function.* nesting). Native encoder handles both nested and flat schemas (see encoders/gemma4.py:_format_function_declaration).",
+  "family": "gpt_oss",
+  "tokenizer_path": "tests/fixtures/tokenizers/gpt_oss",
+  "sample": {
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "stateful_python_code_exec",
+          "description": "Call this function to execute Python code in a stateful Jupyter notebook environment. Python will respond with the output of the execution or time out after 120.0 seconds.",
+          "parameters": {
+            "properties": {
+              "code": {
+                "description": "Code to execute",
+                "type": "string"
+              }
+            },
+            "required": [
+              "code"
+            ],
+            "type": "object"
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Solve the following math problem. Make sure to put the answer (and only answer) inside \\boxed{}.\n\nEvaluate the integral \\(\\int \\sqrt{x - x^2} \\, dx\\)."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "I need to evaluate the indefinite integral ∫ √(x - x²) dx. Let's first rewrite: √(x - x²) = √(x(1 - x)) = √(x - x²). Could complete the square: x - x² = -(x² - x) = -(x² - x + 1/4 - 1/4) = -( (x - 1/2)² - 1/4 ) = 1/4 - (x - 1/2)².\n\nThus √(x - x²) = √(1/4 - (x - 1/2)²). So integral becomes ∫ √(a² - u²) du where a = 1/2, u = x - 1/2, du = dx.\n\nSo ∫ √(a² - u²) du = (u/2)√(a² - u²) + (a²/2) arcsin(u/a) + C. Standard formula: ∫ √(a² - u²) du = (1/2)[ u √(a² - u²) + a² arcsin(u/a) ] + C.\n\nThus plugging a = 1/2, u = x - 1/2.\n\nCompute u √(a² - u²) = (x - 1/2) √(1/4 - (x - 1/2)²). But √(1/4 - (x - 1/2)²) = √(x - x²). So term is (x - 1/2) √(x - x²).\n\nSecond term: a² arcsin(u/a) = (1/4) arcsin((x - 1/2)/(1/2)) = (1/4) arcsin(2x - 1). So overall:\n\n∫ √(x - x²) dx = (1/2)[ (x - 1/2) √(x - x²) + (1/4) arcsin(2x - 1) ] + C = (1/2)(x - 1/2) √(x - x²) + (1/8) arcsin(2x - 1) + C.\n\nSimplify: (x - 1/2)/2 = (2x - 1)/4. So (1/2)(x - 1/2) = (2x - 1)/4.\n\nThus integral = (2x - 1)/4 √(x - x²) + (1/8) arcsin(2x - 1) + C.\n\nLet me verify using Python symbolic integration. Use sympy to compute integral and differentiate to check. Let's do that."
+          },
+          {
+            "type": "tool_use",
+            "id": "call_10b55d04db1b4f8d90c29986",
+            "name": "stateful_python_code_exec",
+            "input": {
+              "code": "import sympy as sp\n\nx = sp.symbols('x')\nexpr = sp.sqrt(x - x**2)\nintegral = sp.integrate(expr, x)\nintegral_simplified = sp.simplify(integral)\nintegral_simplified"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "name": "stateful_python_code_exec",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_10b55d04db1b4f8d90c29986",
+            "text": "sqrt(x*(1 - x))*(2*x - 1)/4 + asin(2*x - 1)/8"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "That matches: sqrt(x*(1 - x)) = sqrt(x - x²). So integral = (2x - 1)/4 * sqrt(x - x²) + asin(2x - 1)/8 + C. Good.\n\nThus answer is:\n\n\\[\n\\int \\sqrt{x - x^2} \\, dx = \\frac{2x-1}{4} \\sqrt{x - x^2} + \\frac{1}{8} \\arcsin(2x-1) + C.\n\\]\n\nNow provide final answer within \\boxed{}. Should also note domain: x in [0,1] for real-valued sqrt. Use that. So final answer.\n\nI'll output:\n\n\\boxed{\\frac{2x-1}{4}\\sqrt{x-x^2}+\\frac{1}{8}\\arcsin(2x-1)+C}."
+          },
+          {
+            "type": "text",
+            "text": "\\[\n\\int \\sqrt{x - x^2} \\, dx = \\frac{2x-1}{4}\\sqrt{x - x^2} + \\frac{1}{8}\\arcsin(2x-1) + C,\n\\]\nwhere the expression is valid for \\(0 \\le x \\le 1\\) (so that the square root is real).\n\n\\boxed{\\frac{2x-1}{4}\\sqrt{x-x^2}+\\frac{1}{8}\\arcsin(2x-1)+C}"
+          }
+        ]
+      }
+    ]
+  },
+  "max_length": 2048,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "GPT-OSS dispatch may SKIP this fixture: thinking + tool_use on the same assistant maps to analysis + commentary channels, currently unsupported by dispatch capability matrix. Skip is expected behavior, not failure."
+  }
+}

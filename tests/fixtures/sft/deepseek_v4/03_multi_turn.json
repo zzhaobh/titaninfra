@@ -1,0 +1,51 @@
+{
+  "_description": "P0 DSv4 fixture: 2-exchange multi-turn user/assistant. Exercises inter-turn marker boundaries on DSv4 (BOS only once, EOS between turns).",
+  "family": "deepseek_v4",
+  "tokenizer_path": "tests/fixtures/tokenizers/deepseek_v4",
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "What is 2+2?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "4."
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "And 3+3?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "6."
+          }
+        ]
+      }
+    ]
+  },
+  "max_length": 512,
+  "expected": {
+    "n_tokens": 26,
+    "n_loss_tokens": 8,
+    "decoded": "<｜begin▁of▁sentence｜><｜User｜>What is 2+2?<｜Assistant｜></think>4.<｜end▁of▁sentence｜><｜User｜>And 3+3?<｜Assistant｜></think>6.<｜end▁of▁sentence｜>"
+  }
+}

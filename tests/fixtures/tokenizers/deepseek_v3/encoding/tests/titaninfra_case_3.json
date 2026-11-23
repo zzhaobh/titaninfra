@@ -1,0 +1,29 @@
+{
+  "_comment": "TitanInfra-native SFTSample for DSV3 case 3: tool-result round-trip (NO assistant tool_calls — DSV3 Jinja drops them). User -> assistant text -> tool_result -> assistant text. Validates tool role rendering through DSV3 preprocessing.",
+  "messages": [
+    {
+      "role": "user",
+      "blocks": [
+        {"type": "text", "text": "Look up the weather in Tokyo."}
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "text", "text": "I'll check the weather for you."}
+      ]
+    },
+    {
+      "role": "tool",
+      "blocks": [
+        {"type": "tool_result", "tool_use_id": "call_xyz", "text": "{\"city\": \"Tokyo\", \"temp_c\": 18, \"condition\": \"cloudy\"}"}
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "text", "text": "Tokyo is currently 18 C and cloudy."}
+      ]
+    }
+  ]
+}

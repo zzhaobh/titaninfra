@@ -1,0 +1,31 @@
+{
+  "_description": "M1.3 Qwen3 fixture: multi-turn conversation with thinking on the HISTORICAL assistant (turn 1) AND on the last assistant (turn 2). Quirk B (empirically verified): Qwen3 Jinja unconditionally strips <think>...</think> from historical assistant content. The last-assistant thinking renders correctly. M2 token-first builder MUST preserve historical thinking. oracle_ok=false documents the Jinja bug; first_divergence=10 is the exact token index where Jinja diverges from the correct M2 output (token 10: jinja='a' (id 64) vs expected='<think>' (id 151667)).",
+  "family": "qwen3",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen3",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "q1"},
+      {
+        "role": "assistant",
+        "blocks": [
+          {"type": "thinking", "text": "reason1"},
+          {"type": "text", "text": "a1"}
+        ]
+      },
+      {"role": "user", "content": "q2"},
+      {
+        "role": "assistant",
+        "blocks": [
+          {"type": "thinking", "text": "reason2"},
+          {"type": "text", "text": "a2"}
+        ]
+      }
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": false,
+    "first_divergence": 10,
+    "notes": "Quirk B: Jinja strips historical <think>...</think>. Probe shows divergence at token index 10 (jinja='a' token=64, expected='<think>' token=151667). M2 must preserve historical thinking. Test uses xfail(strict=True) until M2 ships."
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "_scenario": "with_thinking_history",
+  "_variant": "minimal",
+  "_description": "Two assistant turns; the first (history) carries a thinking block. Families preserving thinking_history train on it; others drop history thinking.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "thinking_current_turn",
+    "thinking_history",
+    "multi_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Q1"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "history thought"
+          },
+          {
+            "type": "text",
+            "text": "A1"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Q2"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "current thought"
+          },
+          {
+            "type": "text",
+            "text": "A2"
+          }
+        ]
+      }
+    ]
+  }
+}

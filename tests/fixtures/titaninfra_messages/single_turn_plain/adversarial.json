@@ -1,0 +1,32 @@
+{
+  "_scenario": "single_turn_plain",
+  "_variant": "adversarial",
+  "_description": "Unicode + whitespace edge cases: full-width punctuation, trailing spaces, emoji.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "「你好」!这是 全 角 与半角 mixed 🌏 "
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "OK——已收到。\nLine2.\tTab-prefixed."
+          }
+        ]
+      }
+    ]
+  }
+}

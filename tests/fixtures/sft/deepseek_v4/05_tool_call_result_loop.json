@@ -1,0 +1,56 @@
+{
+  "_description": "P0 DSv4 fixture: full tool round-trip — assistant DSML tool_call, tool-role <tool_result>, final assistant answer. Exercises the DSML <｜DSML｜tool_calls> block + tool_result framing. Golden snapshot.",
+  "family": "deepseek_v4",
+  "tokenizer_path": "tests/fixtures/tokenizers/deepseek_v4",
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Weather in SF?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "tool_use",
+            "name": "get_weather",
+            "input": {
+              "city": "SF"
+            },
+            "id": "c0"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "text": "sunny 72F",
+            "tool_use_id": "c0"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "It is sunny, 72F."
+          }
+        ]
+      }
+    ]
+  },
+  "max_length": 512,
+  "expected": {
+    "n_tokens": 78,
+    "n_loss_tokens": 56,
+    "decoded": "<｜begin▁of▁sentence｜><｜User｜>Weather in SF?<｜Assistant｜></think>\n\n<｜DSML｜tool_calls>\n<｜DSML｜invoke name=\"get_weather\">\n<｜DSML｜parameter name=\"city\" string=\"true\">SF</｜DSML｜parameter>\n</｜DSML｜invoke>\n</｜DSML｜tool_calls><｜end▁of▁sentence｜><｜User｜><tool_result>sunny 72F</tool_result><｜Assistant｜></think>It is sunny, 72F.<｜end▁of▁sentence｜>"
+  }
+}

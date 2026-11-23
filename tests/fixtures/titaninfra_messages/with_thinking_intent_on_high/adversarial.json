@@ -1,0 +1,86 @@
+{
+  "_scenario": "with_thinking_intent_on_high",
+  "_variant": "adversarial",
+  "_description": "mode=on/effort=high combined with system message and tool use \u2014 exercises feature interaction: thinking_intent must coexist with system prompt and tool_call/tool_result flow.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ToolUseBlock",
+    "ToolResultBlock"
+  ],
+  "_uses_features": [
+    "thinking_intent_effort",
+    "thinking_intent_mode",
+    "tool_call",
+    "tool_result",
+    "tools_declaration"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "system": "You are a careful math assistant. Use the calculator tool when needed.",
+    "tools": [
+      {
+        "name": "calculator",
+        "description": "Evaluate a math expression and return the numeric result.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "expression": {
+              "type": "string",
+              "description": "Math expression to evaluate, e.g. 'sqrt(2025)'."
+            }
+          },
+          "required": [
+            "expression"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "What is sqrt(2025)?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "tool_use",
+            "id": "call_1",
+            "name": "calculator",
+            "input": {
+              "expression": "sqrt(2025)"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "call_1",
+            "text": "45"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "sqrt(2025) = 45."
+          }
+        ]
+      }
+    ],
+    "thinking_intent": {
+      "mode": "on",
+      "effort": "high"
+    }
+  }
+}

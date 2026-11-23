@@ -1,0 +1,71 @@
+{
+  "_scenario": "with_tool_call_parallel",
+  "_variant": "minimal",
+  "_description": "Two parallel tool_use blocks in one assistant message; no results yet.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ToolUseBlock"
+  ],
+  "_uses_features": [
+    "tools_declaration",
+    "tool_call",
+    "parallel_tool_calls"
+  ],
+  "_expects_empty_for_families": [
+    "deepseek_v4",
+    "llama3",
+    "qwen2_5"
+  ],
+  "sample": {
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Return current weather for a city.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City name"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Weather in Beijing and Shanghai?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "tool_use",
+            "id": "c_bj",
+            "name": "get_weather",
+            "input": {
+              "city": "Beijing"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "c_sh",
+            "name": "get_weather",
+            "input": {
+              "city": "Shanghai"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

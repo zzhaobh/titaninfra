@@ -1,0 +1,129 @@
+{
+  "_scenario": "with_thinking_history",
+  "_variant": "adversarial",
+  "_description": "Five assistant turns — history thinking accumulates; checks history-vs-current dispatch.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "thinking_current_turn",
+    "thinking_history",
+    "multi_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Step 0: query"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "reasoning step 0"
+          },
+          {
+            "type": "text",
+            "text": "answer 0"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Step 1: query"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "reasoning step 1"
+          },
+          {
+            "type": "text",
+            "text": "answer 1"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Step 2: query"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "reasoning step 2"
+          },
+          {
+            "type": "text",
+            "text": "answer 2"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Step 3: query"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "reasoning step 3"
+          },
+          {
+            "type": "text",
+            "text": "answer 3"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Step 4: query"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "reasoning step 4"
+          },
+          {
+            "type": "text",
+            "text": "answer 4"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "_description": "Last assistant turn carries a <think> block. The thinking text is part of the assistant's content envelope and must survive intact.",
+  "family": "gemma4",
+  "tokenizer_path": "tests/fixtures/tokenizers/gemma4",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "Is 17 prime?"},
+      {
+        "role": "assistant",
+        "blocks": [
+          {"type": "thinking", "text": "Check divisors up to sqrt(17)≈4.12: 2,3,4. 17/2=8.5, 17/3≈5.67, 17/4=4.25. None integer."},
+          {"type": "text", "text": "Yes, 17 is prime."}
+        ]
+      }
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "Last-assistant thinking envelope. Gemma4 has no Quirk A (empty-think injection); native must match jinja directly."
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "_description": "Regression fixture: assistant TextBlock starts with '\\n'. Locks the qwen3 encoder fix that mirrors jinja's `content.lstrip('\\n')` (chat_template.jinja line 45). Without the fix, two seams break: (1) standard path — MARKER `<|im_start|>assistant\\n` + CONTENT `\\nReply...` is two-piece tokenized with one extra token vs. joint render; (2) quirk-A path — injected empty-think `\\n\\n` CONTENT merges with this body, producing `\\n\\n\\n` instead of jinja's `\\n\\n`. Real-world data hit this in data/sft_test/mixed/train.jsonl samples 87 + 130, surfaced by GPU Case 17 alignment-check.",
+  "family": "qwen3",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen3",
+  "sample": {
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "Write a short note."}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "\nDear Reviewer,\n\nThanks for your time."}]}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "Both encoder branches (standard and quirk-A via lstrip) must match jinja byte-for-byte at the role-marker / content seam."
+  }
+}

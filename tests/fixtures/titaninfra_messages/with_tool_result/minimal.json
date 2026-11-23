@@ -1,0 +1,79 @@
+{
+  "_scenario": "with_tool_result",
+  "_variant": "minimal",
+  "_description": "Single call followed by one tool_result and a final text answer.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ToolUseBlock",
+    "ToolResultBlock"
+  ],
+  "_uses_features": [
+    "tools_declaration",
+    "tool_call",
+    "tool_result"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Return current weather for a city.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City name"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Beijing weather?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "tool_use",
+            "id": "c1",
+            "name": "get_weather",
+            "input": {
+              "city": "Beijing"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "blocks": [
+          {
+            "type": "tool_result",
+            "tool_use_id": "c1",
+            "text": "{\"temp\": 25, \"condition\": \"sunny\"}"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Beijing is 25°C and sunny today."
+          }
+        ]
+      }
+    ]
+  }
+}

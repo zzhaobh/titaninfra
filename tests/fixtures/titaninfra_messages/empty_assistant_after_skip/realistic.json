@@ -1,0 +1,38 @@
+{
+  "_scenario": "empty_assistant_after_skip",
+  "_variant": "realistic",
+  "_description": "Realistic CoT-only assistant turn — common in distilled reasoning datasets.",
+  "_uses_blocks": [
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "thinking_current_turn"
+  ],
+  "_expects_empty_for_families": [
+    "qwen2_5",
+    "llama3",
+    "deepseek_v3"
+  ],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Prove √2 is irrational."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "Assume √2 = p/q in lowest terms; then 2q² = p² so p is even; write p = 2k, so q² = 2k², so q is also even — contradiction."
+          }
+        ]
+      }
+    ]
+  }
+}

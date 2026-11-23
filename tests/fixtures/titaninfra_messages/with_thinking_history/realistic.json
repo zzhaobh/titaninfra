@@ -1,0 +1,63 @@
+{
+  "_scenario": "with_thinking_history",
+  "_variant": "realistic",
+  "_description": "Two-turn math dialogue with thinking on both turns.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "thinking_current_turn",
+    "thinking_history",
+    "multi_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "If x + 3 = 7, what is x?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "Subtract 3 from both sides: x = 7 - 3 = 4."
+          },
+          {
+            "type": "text",
+            "text": "x = 4."
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Now what is 2x + 1?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "Using x = 4 from the previous step: 2*4 + 1 = 9."
+          },
+          {
+            "type": "text",
+            "text": "2x + 1 = 9."
+          }
+        ]
+      }
+    ]
+  }
+}

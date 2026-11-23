@@ -1,0 +1,22 @@
+{
+  "_description": "M1.3 Qwen3 fixture: single-turn with thinking on the LAST assistant. The NormalizedSample passes thinking via the dedicated 'thinking' field (NOT embedded in content). Qwen3Encoder must translate this into the on-the-wire <think>...</think> envelope so Jinja preserves it. If the encoder fails to translate, Jinja would inject an empty <think>\\n\\n</think> instead (Quirk A, see probe results). This fixture's oracle_ok=true verifies the encoder DOES translate correctly, sidestepping Quirk A.",
+  "family": "qwen3",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen3",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "What is 2+2?"},
+      {
+        "role": "assistant",
+        "blocks": [
+          {"type": "thinking", "text": "Two plus two is four."},
+          {"type": "text", "text": "4."}
+        ]
+      }
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "Encoder must embed thinking-field into content as <think>{text}</think> for Jinja consumption. Quirk A (empty <think> injection) is bypassed by this embedding."
+  }
+}

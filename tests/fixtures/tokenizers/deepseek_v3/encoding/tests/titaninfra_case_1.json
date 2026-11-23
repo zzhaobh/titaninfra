@@ -1,0 +1,18 @@
+{
+  "_comment": "TitanInfra-native SFTSample for DSV3 case 1: single-turn with thinking + text. Tests basic Jinja rendering + boundary detection for canonical assistant turn.",
+  "messages": [
+    {
+      "role": "user",
+      "blocks": [
+        {"type": "text", "text": "What is the capital of France?"}
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "thinking", "text": "The user is asking a basic geography question. The capital of France is Paris."},
+        {"type": "text", "text": "The capital of France is Paris."}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+# Downloadable tokenizer assets are materialized by download_all.py.
+**/tokenizer.json
+**/tokenizer_config.json
+**/special_tokens_map.json
+**/generation_config.json
+**/tiktoken.model
+**/tokenization_moonshot.py

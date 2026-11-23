@@ -1,0 +1,37 @@
+{
+  "_description": "P0 DSv4 fixture: assistant turn with a thinking block + answer. Exercises <think>...</think> emission and that thinking content is supervised (DSv4 trains current-turn thinking). Golden snapshot.",
+  "family": "deepseek_v4",
+  "tokenizer_path": "tests/fixtures/tokenizers/deepseek_v4",
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Solve 2+2."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "Two plus two equals four."
+          },
+          {
+            "type": "text",
+            "text": "4"
+          }
+        ]
+      }
+    ]
+  },
+  "max_length": 512,
+  "expected": {
+    "n_tokens": 19,
+    "n_loss_tokens": 10,
+    "decoded": "<｜begin▁of▁sentence｜><｜User｜>Solve 2+2.<｜Assistant｜><think>Two plus two equals four.</think>4<｜end▁of▁sentence｜>"
+  }
+}

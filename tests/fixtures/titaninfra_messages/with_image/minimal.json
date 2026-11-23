@@ -1,0 +1,42 @@
+{
+  "_scenario": "with_image",
+  "_variant": "minimal",
+  "_description": "User attaches one image and asks a question; assistant replies with text. All current families warn-skip the image block.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ImageBlock"
+  ],
+  "_uses_features": [
+    "image"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "image",
+            "source": {
+              "type": "path",
+              "data": "/data/images/cat.jpg"
+            }
+          },
+          {
+            "type": "text",
+            "text": "What animal is this?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "It is a cat."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "_description": "Step B fixture 05: assistant emits a tool_call alongside text content. Exercises (a) <tool_call>...</tool_call> block emission, (b) the leading-\\n rule when first tool_call follows non-empty content (loop.first AND content => emit \\n), (c) tool_call ordering between content and <|im_end|>\\n. No top-level tools, no tool-role responses — those land in fixtures 06/07/08.",
+  "family": "qwen3",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen3",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "What's the weather in SF?"},
+      {
+        "role": "assistant",
+        "blocks": [
+          {"type": "text", "text": "Let me check."},
+          {"type": "tool_use", "name": "get_weather", "input": {"city": "SF"}, "id": "call_0"}
+        ]
+      }
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "Jinja branches: assistant is loop.last AND index>last_query_index => Quirk A empty <think>\\n\\n</think>\\n\\n inject; tool_calls loop.first AND content (=='Let me check.') => leading \\n before first <tool_call>. Native renderer must match byte-for-byte and emit tool_call block BETWEEN content and <|im_end|>\\n."
+  }
+}

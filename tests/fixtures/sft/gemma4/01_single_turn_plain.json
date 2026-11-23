@@ -1,0 +1,16 @@
+{
+  "_description": "Gemma4 baseline: one user → one assistant text turn. Pins the <|turn>user/model marker emission and the plain-text body. No system, no tools, no thinking, no tool-use.",
+  "family": "gemma4",
+  "tokenizer_path": "tests/fixtures/tokenizers/gemma4",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "What is 2+2?"},
+      {"role": "assistant", "content": "2+2 equals 4."}
+    ]
+  },
+  "max_length": 128,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "Smoke baseline. If this fails, the encoder is fundamentally wrong (marker / EOS / BOS emission). Match jinja byte-for-byte."
+  }
+}

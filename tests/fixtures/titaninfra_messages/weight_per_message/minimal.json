@@ -1,0 +1,55 @@
+{
+  "_scenario": "weight_per_message",
+  "_variant": "minimal",
+  "_description": "First assistant turn weight=0 (don't train), second weight=1 (train). Stream config sft_mask_mode='manual' is implied at test time.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "loss_weight_per_message",
+    "multi_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "draft"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "weight": 0,
+        "blocks": [
+          {
+            "type": "text",
+            "text": "rough draft"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "polish it"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "weight": 1,
+        "blocks": [
+          {
+            "type": "text",
+            "text": "polished version"
+          }
+        ]
+      }
+    ]
+  }
+}

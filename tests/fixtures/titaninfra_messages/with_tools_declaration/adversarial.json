@@ -1,0 +1,97 @@
+{
+  "_scenario": "with_tools_declaration",
+  "_variant": "adversarial",
+  "_description": "Tool schema with nested object + array + enum — stresses JSON Schema serialization.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "tools_declaration"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "tools": [
+      {
+        "name": "create_booking",
+        "description": "Create a multi-leg flight booking.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "passenger": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "age": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "frequent_flyer_tier": {
+                  "type": "string",
+                  "enum": [
+                    "bronze",
+                    "silver",
+                    "gold",
+                    "platinum"
+                  ]
+                }
+              },
+              "required": [
+                "name"
+              ]
+            },
+            "legs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "YYYY-MM-DD"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to",
+                  "date"
+                ]
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "passenger",
+            "legs"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Help me plan a trip."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Sure — where are you starting and where would you like to go?"
+          }
+        ]
+      }
+    ]
+  }
+}

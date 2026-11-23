@@ -1,0 +1,45 @@
+{
+  "_scenario": "type_overrides_thinking_half",
+  "_variant": "adversarial",
+  "_description": "type_overrides sets thinking=0 — entire thinking block fully masked.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "type_overrides",
+    "thinking_current_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "loss_config": {
+      "type_overrides": {
+        "thinking": 0
+      }
+    },
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "test"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "this should contribute zero loss"
+          },
+          {
+            "type": "text",
+            "text": "answer"
+          }
+        ]
+      }
+    ]
+  }
+}

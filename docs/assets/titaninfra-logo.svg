@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="220" viewBox="0 0 440 220" role="img" aria-labelledby="title desc">
+  <title id="title">TitanInfra TTI logo</title>
+  <desc id="desc">A minimal TTI letterform for full-stack LM development, with a three-color bar square above the I for future self-developed RL.</desc>
+
+  <!-- First T: elastic data entering the unified training stack -->
+  <path d="M28 68 C66 32 110 32 148 68" fill="none" stroke="#22D3EE" stroke-width="26" stroke-linecap="round"/>
+  <rect x="74" y="68" width="28" height="116" rx="8" fill="#22D3EE"/>
+
+  <!-- Second T: unified Pretrain, SFT, and CPT layers -->
+  <rect x="170" y="42" width="118" height="28" rx="8" fill="#6366F1"/>
+  <rect x="215" y="70" width="28" height="114" rx="8" fill="#6366F1"/>
+
+  <!-- Three stacked color bars above the I: data, unified training, future self-developed RL -->
+  <rect x="302" y="6" width="56" height="16" rx="4" fill="#22D3EE"/>
+  <rect x="302" y="26" width="56" height="16" rx="4" fill="#6366F1"/>
+  <rect x="302" y="46" width="56" height="16" rx="4" fill="#A78BFA"/>
+
+  <!-- I: shared infrastructure and checkpoint continuity -->
+  <rect x="316" y="76" width="28" height="108" rx="8" fill="#0B1220"/>
+</svg>

@@ -1,0 +1,74 @@
+{
+  "_scenario": "weight_per_message",
+  "_variant": "realistic",
+  "_description": "Mixed-weight multi-turn — partial supervision typical in distilled datasets.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "loss_weight_per_message",
+    "multi_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Summarise paragraph 1."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "weight": 1.0,
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Paragraph 1 covers X."
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Now paragraph 2."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "weight": 0.5,
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Paragraph 2 covers Y."
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "And paragraph 3."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "weight": 0.0,
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Skip this one."
+          }
+        ]
+      }
+    ]
+  }
+}

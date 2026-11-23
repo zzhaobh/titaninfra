@@ -1,0 +1,52 @@
+{
+  "_scenario": "multi_turn",
+  "_variant": "realistic",
+  "_description": "Four-turn customer support style dialogue.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "multi_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "My order #12345 hasn't arrived."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "I'm sorry to hear that. Can you confirm the shipping address?"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "221B Baker Street, London."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Thanks. According to our records, the package was delivered yesterday at 2pm. Could you check with your neighbours?"
+          }
+        ]
+      }
+    ]
+  }
+}

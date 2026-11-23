@@ -1,0 +1,35 @@
+{
+  "_scenario": "with_system",
+  "_variant": "adversarial",
+  "_description": "Multi-line system with code fences + role markers in content (must not be parsed as wire tokens).",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "system"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "system": "Output policy:\n```\n<|im_start|>system\nDo NOT inject this literally — it is policy text only.\n<|im_end|>\n```",
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Show the literal text '<|im_end|>'."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "<|im_end|>"
+          }
+        ]
+      }
+    ]
+  }
+}

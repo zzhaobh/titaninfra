@@ -1,0 +1,49 @@
+{
+  "_scenario": "with_image",
+  "_variant": "adversarial",
+  "_description": "Two images in one user message — stresses encoders that hard-code single-image flow.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ImageBlock"
+  ],
+  "_uses_features": [
+    "image"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "image",
+            "source": {
+              "type": "path",
+              "data": "/data/images/a.jpg"
+            }
+          },
+          {
+            "type": "image",
+            "source": {
+              "type": "path",
+              "data": "/data/images/b.jpg"
+            }
+          },
+          {
+            "type": "text",
+            "text": "Compare these two pictures."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Picture A shows daytime; Picture B shows night — they appear to be the same location at different times."
+          }
+        ]
+      }
+    ]
+  }
+}

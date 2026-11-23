@@ -1,0 +1,27 @@
+{
+  "_description": "llama3 fixture: multi-sentence system prompt + single exchange. Exercises system block emission with non-trivial length. L1 parity vs jinja. Golden snapshot.",
+  "family": "llama3",
+  "tokenizer_path": "tests/fixtures/tokenizers/llama3",
+  "sample": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a meticulous assistant. Always answer concisely and show your reasoning only when explicitly asked. Prefer SI units."
+      },
+      {
+        "role": "user",
+        "content": "What's 10 km in meters?"
+      },
+      {
+        "role": "assistant",
+        "content": "10000 meters."
+      }
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "n_tokens": 56,
+    "n_loss_tokens": 5,
+    "decoded": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a meticulous assistant. Always answer concisely and show your reasoning only when explicitly asked. Prefer SI units.<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nWhat's 10 km in meters?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n10000 meters.<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n"
+  }
+}

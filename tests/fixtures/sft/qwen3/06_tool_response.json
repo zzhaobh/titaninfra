@@ -1,0 +1,22 @@
+{
+  "_description": "Step B fixture 06: 3-turn tool-use round-trip — user query, assistant pure tool_call (empty content; no leading \\n before <tool_call> because loop.first AND content=='' => False), tool-role response wrapped as <|im_start|>user with <tool_response>...</tool_response>. The assistant in this fixture is NOT loop.last (a tool message follows), so Quirk A does NOT fire — content stays empty (else branch in renderer).",
+  "family": "qwen3",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen3",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "What's the weather in SF?"},
+      {
+        "role": "assistant",
+        "blocks": [
+          {"type": "tool_use", "name": "get_weather", "input": {"city": "SF"}, "id": "call_0"}
+        ]
+      },
+      {"role": "tool", "content": "sunny, 72F", "tool_call_id": "call_0"}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "Critical contracts: (1) empty-content assistant => first <tool_call> has NO leading \\n; (2) tool-role becomes <|im_start|>user\\n<tool_response>\\nsunny, 72F\\n</tool_response><|im_end|>\\n (first AND last in chain); (3) last_query_index reverse-walk MUST treat the wrapped tool-response user as NOT a real user query (startswith + endswith)."
+  }
+}

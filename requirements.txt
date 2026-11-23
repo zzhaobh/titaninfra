@@ -1,0 +1,29 @@
+# TitanInfra core dependencies
+# Install with: pip install -r requirements.txt
+# For an editable install without dependency resolution: pip install --no-deps -e .
+
+# Core ML (the verified training baseline is PyTorch 2.15)
+torch>=2.15.0,<2.16.0
+numpy>=1.24.0
+
+# Configuration and CLI
+pyyaml>=6.0
+click>=8.0
+
+# Data structures
+tensordict>=0.3.0
+
+# MDS conversion, native tokenization, and training data loading
+pandas>=2.0.0
+pyarrow>=14.0.0
+datasets>=2.14.0
+transformers>=5.10.0
+torchdata>=0.11.0
+
+# Serialization and validation required by top-level imports
+msgspec>=0.18.0
+pydantic>=2.0.0
+
+# System and image I/O utilities required by top-level imports
+psutil>=5.9.0
+pillow>=10.0.0

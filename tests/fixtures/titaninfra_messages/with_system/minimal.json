@@ -1,0 +1,35 @@
+{
+  "_scenario": "with_system",
+  "_variant": "minimal",
+  "_description": "Single system + single user/assistant pair.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "system"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "system": "You are a helpful assistant.",
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "hi"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "hello"
+          }
+        ]
+      }
+    ]
+  }
+}

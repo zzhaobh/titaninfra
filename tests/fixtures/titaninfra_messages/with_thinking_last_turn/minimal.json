@@ -1,0 +1,39 @@
+{
+  "_scenario": "with_thinking_last_turn",
+  "_variant": "minimal",
+  "_description": "Last assistant carries one thinking block followed by one text block.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "thinking_current_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "2+2?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "two plus two"
+          },
+          {
+            "type": "text",
+            "text": "4"
+          }
+        ]
+      }
+    ]
+  }
+}

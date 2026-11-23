@@ -1,0 +1,32 @@
+{
+  "_scenario": "single_turn_plain",
+  "_variant": "minimal",
+  "_description": "Smallest possible chat sample: one user + one assistant, text-only.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "hi"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "hello"
+          }
+        ]
+      }
+    ]
+  }
+}

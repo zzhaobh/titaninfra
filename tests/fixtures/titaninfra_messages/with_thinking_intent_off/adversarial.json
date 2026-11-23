@@ -1,0 +1,44 @@
+{
+  "_scenario": "with_thinking_intent_off",
+  "_variant": "adversarial",
+  "_description": "Sample-level mode=off paired with an existing assistant ThinkingBlock \u2014 deliberate semantic contradiction. Exercises dispatch capability detection (both mode and thinking_current_turn fire); the converter-level fail-loud for this contradiction is covered separately by P5.2.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "thinking_current_turn",
+    "thinking_intent_mode"
+  ],
+  "_expects_empty_for_families": [],
+  "_expects_validator_fail": "THINKING_INTENT_CONFLICT",
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Compute 17 * 23 without thinking out loud."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "17 * 23 = 17 * 20 + 17 * 3 = 340 + 51 = 391."
+          },
+          {
+            "type": "text",
+            "text": "391"
+          }
+        ]
+      }
+    ],
+    "thinking_intent": {
+      "mode": "off"
+    }
+  }
+}

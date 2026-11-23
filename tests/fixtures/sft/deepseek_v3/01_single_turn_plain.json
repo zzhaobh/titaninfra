@@ -1,0 +1,15 @@
+{
+  "_description": "DSv3 minimal fixture: single-turn plain-text user+assistant. Drives the registry + dispatch wiring for DeepSeekV3Encoder. No system, no tools, no thinking, no tool_calls.",
+  "family": "deepseek_v3",
+  "tokenizer_path": "tests/fixtures/tokenizers/deepseek_v3",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "What is 2+2?"},
+      {"role": "assistant", "content": "2+2 equals 4."}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true
+  }
+}

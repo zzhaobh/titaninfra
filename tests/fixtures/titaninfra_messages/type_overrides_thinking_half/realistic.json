@@ -1,0 +1,69 @@
+{
+  "_scenario": "type_overrides_thinking_half",
+  "_variant": "realistic",
+  "_description": "Multi-turn CoT with thinking downweighted globally.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "type_overrides",
+    "thinking_current_turn",
+    "thinking_history",
+    "multi_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "loss_config": {
+      "type_overrides": {
+        "thinking": 0.5
+      }
+    },
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Solve x²=16."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "take square root, consider both signs"
+          },
+          {
+            "type": "text",
+            "text": "x = ±4"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Now x²=25."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "same method"
+          },
+          {
+            "type": "text",
+            "text": "x = ±5"
+          }
+        ]
+      }
+    ]
+  }
+}

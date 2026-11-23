@@ -1,0 +1,33 @@
+{
+  "_description": "Step B fixture 07: top-level tools + plain user/assistant. Validates tools header is merged into the first system block — system content joined with '\\n\\n' before '# Tools\\n\\nYou may call...<tools>\\n{tool|tojson}\\n</tools>...' footer, all inside ONE <|im_start|>system\\n...<|im_end|>\\n.",
+  "family": "qwen3",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen3",
+  "sample": {
+    "system": "You are a helpful assistant.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_weather",
+          "description": "Get current weather for a city.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "city": {"type": "string", "description": "City name"}
+            },
+            "required": ["city"]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {"role": "user", "content": "Hello."},
+      {"role": "assistant", "content": "Hi there."}
+    ]
+  },
+  "max_length": 512,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "Critical: jinja `tojson` filter byte format = json.dumps(obj, sort_keys=True, ensure_ascii=True). Native renderer must emit a single <|im_start|>system\\n + system text + '\\n\\n# Tools...' + '<tools>' + '\\n' + tojson(tool) + '\\n</tools>...' + <|im_end|>\\n. Last assistant gets Quirk A empty-think injection."
+  }
+}

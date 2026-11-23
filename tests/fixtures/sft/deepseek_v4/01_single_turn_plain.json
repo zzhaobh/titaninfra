@@ -1,0 +1,33 @@
+{
+  "_description": "P0 DSv4 fixture: single-turn plain-text user+assistant. Smallest possible exercise of dispatch -> DeepSeekV4Encoder. No system, no thinking, no tools, no tool_calls. DSv4 has no jinja template; expected.decoded is a golden lockstep snapshot of the encoder output itself, not a jinja parity baseline.",
+  "family": "deepseek_v4",
+  "tokenizer_path": "tests/fixtures/tokenizers/deepseek_v4",
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "What is 2+2?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "2+2 equals 4."
+          }
+        ]
+      }
+    ]
+  },
+  "max_length": 512,
+  "expected": {
+    "n_tokens": 19,
+    "n_loss_tokens": 9,
+    "decoded": "<｜begin▁of▁sentence｜><｜User｜>What is 2+2?<｜Assistant｜></think>2+2 equals 4.<｜end▁of▁sentence｜>"
+  }
+}

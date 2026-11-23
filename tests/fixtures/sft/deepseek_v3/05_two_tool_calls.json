@@ -1,0 +1,19 @@
+{
+  "_description": "DSv3 fixture: assistant emits two tool_calls in one turn. Exercises the per-iteration <｜tool▁calls▁end｜><｜end▁of▁sentence｜> closing-tag bug in the jinja template — only the second call gets the closing tags; we mirror byte-for-byte.",
+  "family": "deepseek_v3",
+  "tokenizer_path": "tests/fixtures/tokenizers/deepseek_v3",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "q"},
+      {"role": "assistant", "blocks": [
+        {"type": "tool_use", "name": "a", "input": {"x": 1}, "id": "c1"},
+        {"type": "tool_use", "name": "b", "input": {"y": 2}, "id": "c2"}
+      ]}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "Two tool_calls: closing tags fire once (after the second call). Confirms the encoder mirrors the jinja per-iteration emission bug."
+  }
+}

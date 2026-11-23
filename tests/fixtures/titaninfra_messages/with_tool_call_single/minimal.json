@@ -1,0 +1,61 @@
+{
+  "_scenario": "with_tool_call_single",
+  "_variant": "minimal",
+  "_description": "Single tool_use block emitted by assistant. No tool result message.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ToolUseBlock"
+  ],
+  "_uses_features": [
+    "tools_declaration",
+    "tool_call"
+  ],
+  "_expects_empty_for_families": [
+    "qwen2_5",
+    "llama3"
+  ],
+  "sample": {
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Return current weather for a city.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City name"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Beijing weather?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "tool_use",
+            "id": "c1",
+            "name": "get_weather",
+            "input": {
+              "city": "Beijing"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

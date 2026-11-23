@@ -1,0 +1,73 @@
+{
+  "_scenario": "with_thinking_intent_off",
+  "_variant": "realistic",
+  "_description": "Multi-turn dialogue with sample-level mode=off \u2014 assistant answers directly across turns, no thinking branch produced.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "thinking_intent_mode"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "What's the capital of France?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Paris."
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "And of Germany?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Berlin."
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Which is more populous?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Berlin has a larger population than Paris (about 3.7M vs 2.1M in the city proper)."
+          }
+        ]
+      }
+    ],
+    "thinking_intent": {
+      "mode": "off"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "_description": "Step E Qwen2.5 fixture: multi-turn user/assistant (2 exchanges). Verifies multi-turn rendering through dispatch -> Qwen2_5Encoder -> tokenize_with_hf_template. No thinking (Qwen2.5 has no native thinking protocol), no tools, no tool_calls, no system. The point is to exercise the inter-turn transition tokens (im_end + im_start newline boundaries on Qwen2.5).",
+  "family": "qwen2_5",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen2_5",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "What is 2+2?"},
+      {"role": "assistant", "content": "4."},
+      {"role": "user", "content": "And 3+3?"},
+      {"role": "assistant", "content": "6."}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "No known Jinja quirk for plain multi-turn on Qwen2.5. M3 token-first builder must match jinja bit-for-bit including inter-turn delimiters."
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "_scenario": "with_tool_call_single",
+  "_variant": "realistic",
+  "_description": "Assistant introduces the call with a leading text block then invokes the tool.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ToolUseBlock"
+  ],
+  "_uses_features": [
+    "tools_declaration",
+    "tool_call"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Return current weather for a city.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City name"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Could you check the weather in Tokyo?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Let me look that up for you."
+          },
+          {
+            "type": "tool_use",
+            "id": "c1",
+            "name": "get_weather",
+            "input": {
+              "city": "Tokyo"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

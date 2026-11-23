@@ -1,0 +1,60 @@
+{
+  "_scenario": "with_tool_call_single",
+  "_variant": "adversarial",
+  "_description": "Tool arguments contain quotes, newlines, JSON-special chars — stresses arg serialization.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ToolUseBlock"
+  ],
+  "_uses_features": [
+    "tools_declaration",
+    "tool_call"
+  ],
+  "_expects_empty_for_families": [
+    "qwen2_5",
+    "llama3"
+  ],
+  "sample": {
+    "tools": [
+      {
+        "name": "execute_sql",
+        "description": "Run a SQL query.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Find users named O'Brien."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "tool_use",
+            "id": "c1",
+            "name": "execute_sql",
+            "input": {
+              "query": "SELECT * FROM users WHERE name = 'O''Brien'\nAND active = TRUE"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

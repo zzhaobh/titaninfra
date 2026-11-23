@@ -1,0 +1,24 @@
+{
+  "_description": "Assistant tool_call → tool response → assistant final text. Pins (a) inline <|tool_response>...<tool_response|> block emission, (b) continue_same_model_turn behaviour (post-tool assistant text inside the previous model turn, no second <|turn>model marker).",
+  "family": "gemma4",
+  "tokenizer_path": "tests/fixtures/tokenizers/gemma4",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "Weather in Tokyo?"},
+      {
+        "role": "assistant",
+        "blocks": [
+          {"type": "tool_use", "name": "get_weather", "input": {"city": "Tokyo"}, "id": "call_0"}
+        ]
+      },
+      {"role": "tool", "content": "{\"temp_c\": 18, \"condition\": \"clear\"}", "tool_call_id": "call_0"},
+      {"role": "assistant", "content": "It's 18°C and clear in Tokyo."}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": false,
+    "first_divergence": 13,
+    "notes": "DELIBERATE DIVERGENCE (native > jinja oracle). L1 input_ids byte-identical; L2 labels diverge at idx 13. The native Segment encoder TRAINS the tool_call body (<|tool_call>call:get_weather...) — class-B model-generated content. The legacy offset-masking oracle MASKED it: continue_same_model_turn collapses the tool_call assistant's loss range to empty (content_start > next_boundary), a silent loss-drop bug. The Segment encoder is structurally correct. See docs/superpowers/specs/2026-06-07-gemma4-native-segment-encoder-design.md."
+  }
+}

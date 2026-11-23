@@ -1,0 +1,39 @@
+{
+  "_scenario": "with_thinking_last_turn",
+  "_variant": "realistic",
+  "_description": "Reasoning over a proof: thinking explains derivation, text gives the conclusion.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "thinking_current_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Prove that the sum of two even numbers is even."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "Let a = 2m and b = 2n for integers m, n. Then a + b = 2m + 2n = 2(m + n), which is even by definition."
+          },
+          {
+            "type": "text",
+            "text": "Let a and b be even, so a = 2m and b = 2n for integers m, n. Then a + b = 2(m + n), which is even. ∎"
+          }
+        ]
+      }
+    ]
+  }
+}

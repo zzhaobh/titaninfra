@@ -1,0 +1,42 @@
+{
+  "_scenario": "with_image",
+  "_variant": "realistic",
+  "_description": "User provides image + nuanced question; assistant gives a structured answer.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ImageBlock"
+  ],
+  "_uses_features": [
+    "image"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "image",
+            "source": {
+              "type": "path",
+              "data": "/data/images/landscape.jpg"
+            }
+          },
+          {
+            "type": "text",
+            "text": "Describe the scene and estimate the time of day based on lighting."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "A coastal cliff with golden grass; the warm, low-angle sunlight suggests late afternoon, roughly an hour before sunset."
+          }
+        ]
+      }
+    ]
+  }
+}

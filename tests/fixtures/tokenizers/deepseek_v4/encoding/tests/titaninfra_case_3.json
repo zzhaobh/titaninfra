@@ -1,0 +1,109 @@
+{
+  "_comment": "TitanInfra-native SFTSample for DSV4 case 3: latest_reminder + developer turn (web search, 3 tools). Tools go into developer turn (not system). Both assistant turns have ThinkingBlock. Expected output: test_output_3.txt",
+  "messages": [
+    {
+      "role": "system",
+      "blocks": [{"type": "text", "text": "该助手为DeepSeek，由深度求索公司创造。"}]
+    },
+    {
+      "role": "latest_reminder",
+      "blocks": [{"type": "text", "text": "2026-02-21,星期六,广州,App,中文"}]
+    },
+    {
+      "role": "developer",
+      "blocks": [{"type": "text", "text": "小柴胡冲剂和布洛芬能一起吃吗？\n\nCITATION FORMAT: 【{cursor_id}†L{start_line_id}(-L{end_line_id})?】"}]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "thinking", "text": "用户想知道小柴胡冲剂和布洛芬能否一起服用。"},
+        {"type": "tool_use", "id": "call_0", "name": "search", "input": {"queries": "小柴胡冲剂 布洛芬 相互作用 一起吃"}}
+      ]
+    },
+    {
+      "role": "tool",
+      "blocks": [{"type": "tool_result", "tool_use_id": "call_0", "text": "[0]"}]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "thinking", "text": "现在开始组织回答。"},
+        {"type": "text", "text": "请及时就医。"}
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "search",
+      "description": "Web search. Split multiple queries with '||'.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "queries": {
+            "type": "string",
+            "description": "query1||query2"
+          }
+        },
+        "required": ["queries"],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "name": "open",
+      "description": "Batch open IDs (format 【{id}†...】) or URLs.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "open_list": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "description": "ID or URL",
+                  "anyOf": [{"type": "integer"}, {"type": "string"}],
+                  "default": -1
+                },
+                "cursor": {"type": "integer", "description": "", "default": -1},
+                "loc": {"type": "integer", "description": "Start line", "default": -1},
+                "num_lines": {"type": "integer", "description": "", "default": -1},
+                "view_source": {"type": "boolean", "description": "", "default": false}
+              },
+              "additionalProperties": false
+            },
+            "description": ""
+          }
+        },
+        "required": ["open_list"],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    },
+    {
+      "name": "find",
+      "description": "Find exact text pattern in pages.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "find_list": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "pattern": {"type": "string", "description": ""},
+                "cursor": {"type": "integer", "description": "", "default": -1}
+              },
+              "required": ["pattern"],
+              "additionalProperties": false
+            },
+            "description": ""
+          }
+        },
+        "required": ["find_list"],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    }
+  ]
+}

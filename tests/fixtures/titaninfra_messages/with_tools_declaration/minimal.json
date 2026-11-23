@@ -1,0 +1,52 @@
+{
+  "_scenario": "with_tools_declaration",
+  "_variant": "minimal",
+  "_description": "Tools declared at SFTSample top level but the conversation does not actually use them.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "tools_declaration"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Return current weather for a city.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City name"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "hi"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "hi! you can ask me about the weather."
+          }
+        ]
+      }
+    ]
+  }
+}

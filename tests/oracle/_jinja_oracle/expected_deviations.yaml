@@ -1,0 +1,27 @@
+# Expected deviations between native encoder and Jinja oracle.
+#
+# Format
+# ------
+# Each top-level key is a family name. The value is a list of
+# documented divergences; a divergence entry must include:
+#
+#   - rule_id:       short kebab-case identifier
+#   - level:         L1 | L2 | L3 — which diff level fires
+#   - reason:        one-line human description
+#   - fixture_glob:  optional fixture path glob this rule applies to
+#   - since_commit:  short SHA where the deviation was first recorded
+#
+# CI fails if:
+#   (a) an unexpected divergence appears, OR
+#   (b) a registered deviation no longer reproduces (silent vendor fix).
+#
+# M0 ships this file empty; entries land as encoders flip per-family.
+
+deepseek_v3: []
+qwen3: []
+qwen2_5: []
+llama3: []
+llama4: []
+gemma4: []
+gpt_oss: []
+qwen3_5: []

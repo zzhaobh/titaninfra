@@ -1,0 +1,73 @@
+{
+  "_scenario": "with_tool_call_parallel",
+  "_variant": "realistic",
+  "_description": "Two parallel calls with explanatory text prefix.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ToolUseBlock"
+  ],
+  "_uses_features": [
+    "tools_declaration",
+    "tool_call",
+    "parallel_tool_calls"
+  ],
+  "_expects_empty_for_families": [
+    "deepseek_v4"
+  ],
+  "sample": {
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Return current weather for a city.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City name"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Weather in Tokyo and Seoul today?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "I'll check both cities in parallel."
+          },
+          {
+            "type": "tool_use",
+            "id": "c_tk",
+            "name": "get_weather",
+            "input": {
+              "city": "Tokyo"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "c_sl",
+            "name": "get_weather",
+            "input": {
+              "city": "Seoul"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

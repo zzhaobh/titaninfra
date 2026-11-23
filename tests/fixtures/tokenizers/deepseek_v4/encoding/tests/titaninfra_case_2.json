@@ -1,0 +1,36 @@
+{
+  "_comment": "TitanInfra-native SFTSample for DSV4 case 2: thinking, no tools, multi-turn. No tools → drop_thinking=True in reference encoder → first assistant turn's reasoning_content was dropped. Represented here by omitting ThinkingBlock from turn 1 (encoder emits </think> skip marker) and including ThinkingBlock on turn 2. Expected output: test_output_2.txt",
+  "messages": [
+    {
+      "role": "system",
+      "blocks": [
+        {"type": "text", "text": "You are a helpful assistant."}
+      ]
+    },
+    {
+      "role": "user",
+      "blocks": [
+        {"type": "text", "text": "Hello"}
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "text", "text": "Hi there! How can I help you?"}
+      ]
+    },
+    {
+      "role": "user",
+      "blocks": [
+        {"type": "text", "text": "What is the capital of France?"}
+      ]
+    },
+    {
+      "role": "assistant",
+      "blocks": [
+        {"type": "thinking", "text": "The user asks about the capital of France. It is Paris."},
+        {"type": "text", "text": "The capital of France is Paris."}
+      ]
+    }
+  ]
+}

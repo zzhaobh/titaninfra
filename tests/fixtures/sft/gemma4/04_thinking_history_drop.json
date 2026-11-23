@@ -1,0 +1,24 @@
+{
+  "_description": "Multi-turn with thinking on a HISTORICAL assistant (not the last). If Gemma4 jinja strips historical thinking like Qwen3, this fixture exposes it; oracle_ok will be set to false in a follow-up after the first oracle run reports the divergence. Initial setting: true (optimistic — Gemma4 jinja may preserve thinking).",
+  "family": "gemma4",
+  "tokenizer_path": "tests/fixtures/tokenizers/gemma4",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "Is 17 prime?"},
+      {
+        "role": "assistant",
+        "blocks": [
+          {"type": "thinking", "text": "Divisors check passes."},
+          {"type": "text", "text": "Yes."}
+        ]
+      },
+      {"role": "user", "content": "What about 21?"},
+      {"role": "assistant", "content": "No, 21 = 3 × 7."}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "Historical-thinking handling. If oracle reports divergence on first run, change oracle_ok to false and record first_divergence index here (mirrors qwen3 fixture 04 pattern)."
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "_description": "Step B fixture 08: end-to-end tool-use loop. system + 2 tools + user -> assistant(text + 2 tool_uses) -> tool x2 -> assistant(text). Exercises every Qwen3 tool-use branch in one sample: top-level tools merge, multi tool_calls per asst (loop.first leading-\\n + subsequent always-\\n), consecutive tool messages merge into single <|im_start|>user with two <tool_response> blocks then <|im_end|>\\n on last, last_query_index reverse-walk MUST skip both wrapped tool-response users to land on the original 'user' query.",
+  "family": "qwen3",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen3",
+  "sample": {
+    "system": "You are a research assistant.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "calc",
+          "description": "Evaluate a math expression.",
+          "parameters": {
+            "type": "object",
+            "properties": {"expr": {"type": "string"}},
+            "required": ["expr"]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "search",
+          "description": "Search the web for a query.",
+          "parameters": {
+            "type": "object",
+            "properties": {"q": {"type": "string"}},
+            "required": ["q"]
+          }
+        }
+      }
+    ],
+    "messages": [
+      {"role": "user", "content": "What is 2+3 and find a recipe?"},
+      {
+        "role": "assistant",
+        "blocks": [
+          {"type": "text", "text": "I'll do both."},
+          {"type": "tool_use", "name": "calc", "input": {"expr": "2+3"}, "id": "call_0"},
+          {"type": "tool_use", "name": "search", "input": {"q": "easy pasta recipe"}, "id": "call_1"}
+        ]
+      },
+      {"role": "tool", "content": "5", "tool_call_id": "call_0"},
+      {"role": "tool", "content": "Recipe: boil water, add pasta.", "tool_call_id": "call_1"},
+      {"role": "assistant", "content": "The result is 5 and here's a recipe."}
+    ]
+  },
+  "max_length": 512,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "Last asst (loop.last) AND no <think> => Quirk A injects empty <think>\\n\\n</think>\\n\\n. Mid asst is NOT loop.last but i > last_query_index (last_query_index points at the original user) => content emitted verbatim, no inject; tool_calls: first call has leading \\n (content non-empty), second call also \\n (loop.first=False). Two tool messages merge into one <|im_start|>user block with two \\n<tool_response>...</tool_response> entries; <|im_end|>\\n only on last in chain."
+  }
+}

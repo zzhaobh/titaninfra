@@ -1,0 +1,57 @@
+{
+  "_scenario": "with_thinking_intent_on_high",
+  "_variant": "realistic",
+  "_description": "Multi-turn problem-solving with sample-level mode=on + effort=high \u2014 encoder should signal high-effort thinking on assistant turns per family conventions.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "thinking_intent_mode",
+    "thinking_intent_effort"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "A train leaves city A at 9:00 traveling 80 km/h. Another leaves city B at 10:00 traveling 100 km/h toward A. Cities are 540 km apart. When do they meet?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "By 10:00 the first train has covered 80 km, leaving 460 km between them. Closing speed is 180 km/h, so they meet 460/180 \u2248 2.556 hours after 10:00 \u2014 at about 12:33."
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Where do they meet, measured from A?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "From 9:00 to ~12:33 is 3.556 hours. At 80 km/h, train A has traveled 80 \u00d7 3.556 \u2248 284.4 km from A."
+          }
+        ]
+      }
+    ],
+    "thinking_intent": {
+      "mode": "on",
+      "effort": "high"
+    }
+  }
+}

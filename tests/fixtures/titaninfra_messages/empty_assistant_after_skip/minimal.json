@@ -1,0 +1,38 @@
+{
+  "_scenario": "empty_assistant_after_skip",
+  "_variant": "minimal",
+  "_description": "Single assistant turn containing ONLY ThinkingBlock. For qwen2_5 / llama3 / deepseek_v3 (no thinking support), warn-skip empties the message; dispatch then raises EmptyAssistantError.",
+  "_uses_blocks": [
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "thinking_current_turn"
+  ],
+  "_expects_empty_for_families": [
+    "qwen2_5",
+    "llama3",
+    "deepseek_v3"
+  ],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "hi"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": "only thinking, no text"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "_description": "M1.1 minimal Qwen3 fixture: single-turn plain-text user+assistant. Drives the oracle harness wire-up smoke test. No system prompt, no tools, no thinking, no tool_calls. Synthetic English Q&A.",
+  "family": "_identity_qwen3",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen3",
+  "sample": {
+    "messages": [
+      {"role": "user", "content": "What is 2+2?"},
+      {"role": "assistant", "content": "2+2 equals 4."}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "_description": "Regression fixture: qwen2_5 assistant TextBlock starts with '\\n'. Locks the conditional Option C fix that, when body_text starts with '\\n', moves the trailing '\\n' from the MARKER segment into the head of the CONTENT segment. Without the fix, two-piece tokenization produces 1 phantom token vs jinja (BPE drift across the assistant\\n + \\nBody seam). Unlike qwen3 (which lstrips), qwen2_5 jinja preserves the leading '\\n', so the fix MUST keep the wire string identical — conditional Option C achieves that by relocating the '\\n' across the segment boundary instead of dropping it. expected.oracle_ok=false documents a DELIBERATE L2 (loss-mask) divergence from the jinja-then-mask baseline at the merged '\\n\\n' BPE token (token id 271, idx 33): native gives this token loss=msg_weight (it lives inside CONTENT under Option C); jinja-then-mask baseline assigns it IGNORE_INDEX (everything before response body start is masked). This trade-off is required by the BPE-stability fix and is consistent with HF Trainer's actual behaviour when apply_chat_template output is tokenized once and masked by response-prefix offset.",
+  "family": "qwen2_5",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen2_5",
+  "sample": {
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "Write a short note."}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "\nDear Reviewer,\n\nThanks for your time."}]}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": false,
+    "first_divergence": 33,
+    "notes": "L1 (input_ids) must be byte-exact vs jinja — proves the BPE fix works (drift=0). L2 (labels) diverges at token idx 33 (id 271, '\\n\\n'): native loss=msg_weight, jinja-baseline loss=IGNORE. This is the deliberate Option C trade-off documented in qwen2_5.py:_render_assistant_turn."
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "_scenario": "with_tools_declaration",
+  "_variant": "realistic",
+  "_description": "Three tools declared; conversation does not invoke any of them.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "tools_declaration",
+    "system"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "system": "You can call tools when helpful, but only if necessary.",
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "Return current weather for a city.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City name"
+            }
+          },
+          "required": [
+            "city"
+          ]
+        }
+      },
+      {
+        "name": "search_web",
+        "description": "Search the web and return top results.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "q": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "q"
+          ]
+        }
+      },
+      {
+        "name": "calculator",
+        "description": "Evaluate an arithmetic expression.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "expr": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "expr"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "What is the speed of light?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "The speed of light in vacuum is approximately 299,792,458 m/s."
+          }
+        ]
+      }
+    ]
+  }
+}

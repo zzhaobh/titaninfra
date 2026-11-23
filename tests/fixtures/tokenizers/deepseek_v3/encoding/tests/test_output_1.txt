@@ -1,0 +1,5 @@
+<｜begin▁of▁sentence｜><｜User｜>What is the capital of France?<｜Assistant｜><think>
+The user is asking a basic geography question. The capital of France is Paris.
+</think>
+
+The capital of France is Paris.<｜end▁of▁sentence｜>

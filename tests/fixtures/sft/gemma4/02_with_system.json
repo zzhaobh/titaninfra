@@ -1,0 +1,17 @@
+{
+  "_description": "Gemma4 with top-level system prompt. Pins how the system block is rendered (Gemma4 uses an initial system <|turn> block before user, distinct from Qwen3's <|im_start|>system).",
+  "family": "gemma4",
+  "tokenizer_path": "tests/fixtures/tokenizers/gemma4",
+  "sample": {
+    "system": "You are a concise math tutor. Answer in one sentence.",
+    "messages": [
+      {"role": "user", "content": "Explain pi."},
+      {"role": "assistant", "content": "Pi is the ratio of a circle's circumference to its diameter."}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "System routing through normalize → encoder → renderer. Byte-exact vs jinja."
+  }
+}

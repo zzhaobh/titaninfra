@@ -1,0 +1,36 @@
+{
+  "_scenario": "with_system",
+  "_variant": "realistic",
+  "_description": "Detailed persona system with multi-turn body.",
+  "_uses_blocks": [
+    "TextBlock"
+  ],
+  "_uses_features": [
+    "system",
+    "multi_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "system": "You are a senior backend engineer. Answer in concise, technical language. When asked about trade-offs, list at most three points.",
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "Trade-offs of using a message queue?"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "1. Decoupling — producers and consumers evolve independently.\n2. Backpressure — bursts absorbed, but adds end-to-end latency.\n3. Operational cost — extra moving parts to monitor and scale."
+          }
+        ]
+      }
+    ]
+  }
+}

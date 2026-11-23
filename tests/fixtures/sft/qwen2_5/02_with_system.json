@@ -1,0 +1,17 @@
+{
+  "_description": "Step D Qwen2.5 fixture: system prompt + single-turn user/assistant. Verifies system pass-through through dispatch -> Qwen2_5Encoder -> tokenize_with_hf_template. No thinking (Qwen2.5 has no native thinking protocol), no tools, no tool_calls.",
+  "family": "qwen2_5",
+  "tokenizer_path": "tests/fixtures/tokenizers/qwen2_5",
+  "sample": {
+    "messages": [
+      {"role": "system", "content": "You are a concise math tutor."},
+      {"role": "user", "content": "What is 2+2?"},
+      {"role": "assistant", "content": "4."}
+    ]
+  },
+  "max_length": 256,
+  "expected": {
+    "oracle_ok": true,
+    "notes": "No known Jinja quirk for system+plain-text. M2 token-first builder must produce bit-identical output."
+  }
+}

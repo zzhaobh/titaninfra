@@ -1,0 +1,39 @@
+{
+  "_scenario": "with_thinking_last_turn",
+  "_variant": "adversarial",
+  "_description": "Empty-string thinking block — encoder must not crash on empty text.",
+  "_uses_blocks": [
+    "TextBlock",
+    "ThinkingBlock"
+  ],
+  "_uses_features": [
+    "thinking_current_turn"
+  ],
+  "_expects_empty_for_families": [],
+  "sample": {
+    "messages": [
+      {
+        "role": "user",
+        "blocks": [
+          {
+            "type": "text",
+            "text": "ping"
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "blocks": [
+          {
+            "type": "thinking",
+            "text": ""
+          },
+          {
+            "type": "text",
+            "text": "pong"
+          }
+        ]
+      }
+    ]
+  }
+}

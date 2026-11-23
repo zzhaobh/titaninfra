@@ -1,0 +1,387 @@
+[
+  {
+    "_comment": "场景1: 最简单的单轮对话",
+    "_scenario": "basic_single_turn",
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "你好"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "你好！有什么可以帮助你的？"}]}
+    ]
+  },
+
+  {
+    "_comment": "场景2: 带 system prompt 的单轮对话",
+    "_scenario": "with_system",
+    "system": "你是一个专业的翻译助手，只做中英互译。",
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "翻译：今天天气很好"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "The weather is nice today."}]}
+    ]
+  },
+
+  {
+    "_comment": "场景3: 多轮对话（默认 history=last，自动只训最后一轮）",
+    "_scenario": "multi_turn_default_history",
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "1+1等于几？"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "1+1等于2。"}]},
+      {"role": "user", "blocks": [{"type": "text", "text": "再加3呢？"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "2+3等于5。"}]}
+    ]
+  },
+
+  {
+    "_comment": "场景4: 多轮对话 — history=all，所有 assistant 轮都计算 loss",
+    "_scenario": "multi_turn_all_history",
+    "loss_config": {"history": "all"},
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "什么是递归？"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "递归是函数调用自身的编程技巧。"}]},
+      {"role": "user", "blocks": [{"type": "text", "text": "举个例子？"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "比如阶乘函数：f(n) = n * f(n-1)，其中 f(1) = 1。"}]}
+    ]
+  },
+
+  {
+    "_comment": "场景5: 多轮对话 — history=last_n(2)，训最后两轮 assistant",
+    "_scenario": "multi_turn_last_n",
+    "loss_config": {"history": "last_n", "history_n": 2},
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "你好"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "你好！"}]},
+      {"role": "user", "blocks": [{"type": "text", "text": "1+1？"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "2"}]},
+      {"role": "user", "blocks": [{"type": "text", "text": "再加3？"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "5"}]}
+    ]
+  },
+
+  {
+    "_comment": "场景6: 多轮对话 — history=decay，指数衰减",
+    "_scenario": "multi_turn_decay",
+    "loss_config": {"history": "decay", "history_decay": 0.5},
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "第一轮问题"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "第一轮回答"}]},
+      {"role": "user", "blocks": [{"type": "text", "text": "第二轮问题"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "第二轮回答"}]},
+      {"role": "user", "blocks": [{"type": "text", "text": "第三轮问题"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "第三轮回答"}]}
+    ]
+  },
+
+  {
+    "_comment": "场景7: 手动 weight 覆盖 history 策略",
+    "_scenario": "manual_weight_override",
+    "loss_config": {"history": "last"},
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "重要的历史对话"}]},
+      {"role": "assistant", "weight": 1, "blocks": [{"type": "text", "text": "这轮虽然不是最后一轮，但手动设为1，强制计算loss"}]},
+      {"role": "user", "blocks": [{"type": "text", "text": "最新问题"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "最新回答"}]}
+    ]
+  },
+
+  {
+    "_comment": "场景8: 思考链（CoT）— thinking 降权",
+    "_scenario": "thinking_cot",
+    "loss_config": {"type_overrides": {"thinking": 0.5}},
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "证明根号2是无理数"}]},
+      {"role": "assistant", "blocks": [
+        {"type": "thinking", "text": "使用反证法。假设根号2是有理数，可以表示为 p/q（最简分数）。\n那么 2 = p²/q²，即 p² = 2q²。\np² 是偶数，所以 p 是偶数，设 p = 2k。\n代入得 4k² = 2q²，即 q² = 2k²，所以 q 也是偶数。\n但 p 和 q 都是偶数，与最简分数矛盾。"},
+        {"type": "text", "text": "根号2是无理数。\n\n证明（反证法）：\n假设√2 = p/q（最简分数），则 p² = 2q²。\np² 为偶数 → p 为偶数，设 p = 2k → q² = 2k² → q 为偶数。\np、q 都为偶数，与最简分数矛盾。故√2为无理数。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景9: 思考链 — thinking 不参与 loss（weight=0）",
+    "_scenario": "thinking_no_loss",
+    "loss_config": {"type_overrides": {"thinking": 0}},
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "3的5次方是多少？"}]},
+      {"role": "assistant", "blocks": [
+        {"type": "thinking", "text": "3^1=3, 3^2=9, 3^3=27, 3^4=81, 3^5=243"},
+        {"type": "text", "text": "3的5次方等于243。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景10: 单次工具调用",
+    "_scenario": "single_tool_call",
+    "system": "你是一个助手，可以使用工具回答问题。",
+    "tools": [
+      {
+        "name": "get_weather",
+        "description": "获取指定城市的天气信息",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "city": {"type": "string", "description": "城市名称"}
+          },
+          "required": ["city"]
+        }
+      }
+    ],
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "北京今天天气怎么样？"}]},
+      {"role": "assistant", "blocks": [
+        {"type": "tool_use", "id": "call_001", "name": "get_weather", "input": {"city": "北京"}}
+      ]},
+      {"role": "tool", "blocks": [
+        {"type": "tool_result", "tool_use_id": "call_001", "text": "{\"temperature\": 25, \"condition\": \"晴\", \"humidity\": 40}"}
+      ]},
+      {"role": "assistant", "blocks": [
+        {"type": "text", "text": "北京今天天气晴朗，气温25°C，湿度40%。适合户外活动。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景11: 并行工具调用（一个 assistant turn 内多个 tool_use）",
+    "_scenario": "parallel_tool_calls",
+    "tools": [
+      {"name": "search", "description": "搜索信息", "input_schema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}},
+      {"name": "calc", "description": "数学计算", "input_schema": {"type": "object", "properties": {"expr": {"type": "string"}}, "required": ["expr"]}}
+    ],
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "帮我查一下圆周率的前10位，然后算一下 pi*100 的整数部分"}]},
+      {"role": "assistant", "blocks": [
+        {"type": "tool_use", "id": "c1", "name": "search", "input": {"query": "圆周率前10位"}},
+        {"type": "tool_use", "id": "c2", "name": "calc", "input": {"expr": "int(3.1415926535 * 100)"}}
+      ]},
+      {"role": "tool", "blocks": [
+        {"type": "tool_result", "tool_use_id": "c1", "text": "3.1415926535"}
+      ]},
+      {"role": "tool", "blocks": [
+        {"type": "tool_result", "tool_use_id": "c2", "text": "314"}
+      ]},
+      {"role": "assistant", "blocks": [
+        {"type": "text", "text": "圆周率前10位是 3.1415926535，π×100 的整数部分是 314。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景12: 工具调用失败（is_error=true）",
+    "_scenario": "tool_call_error",
+    "tools": [
+      {"name": "get_stock", "description": "获取股票价格", "input_schema": {"type": "object", "properties": {"symbol": {"type": "string"}}, "required": ["symbol"]}}
+    ],
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "查一下 INVALID_TICKER 的股价"}]},
+      {"role": "assistant", "blocks": [
+        {"type": "tool_use", "id": "c1", "name": "get_stock", "input": {"symbol": "INVALID_TICKER"}}
+      ]},
+      {"role": "tool", "blocks": [
+        {"type": "tool_result", "tool_use_id": "c1", "text": "{\"error\": \"Symbol not found: INVALID_TICKER\"}", "is_error": true}
+      ]},
+      {"role": "assistant", "blocks": [
+        {"type": "text", "text": "抱歉，没有找到代码为 INVALID_TICKER 的股票。请检查股票代码是否正确。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景13: 思考 + 工具调用组合",
+    "_scenario": "thinking_with_tool_call",
+    "loss_config": {"type_overrides": {"thinking": 0.5}},
+    "tools": [
+      {"name": "calc", "description": "计算表达式", "input_schema": {"type": "object", "properties": {"expr": {"type": "string"}}, "required": ["expr"]}}
+    ],
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "如果一个圆的半径是7cm，它的面积是多少？"}]},
+      {"role": "assistant", "blocks": [
+        {"type": "thinking", "text": "圆的面积公式是 A = πr²，r=7，需要计算 π×49。"},
+        {"type": "tool_use", "id": "c1", "name": "calc", "input": {"expr": "3.14159265 * 7 * 7"}}
+      ]},
+      {"role": "tool", "blocks": [
+        {"type": "tool_result", "tool_use_id": "c1", "text": "153.93804"}
+      ]},
+      {"role": "assistant", "blocks": [
+        {"type": "thinking", "text": "计算结果约为153.94平方厘米。"},
+        {"type": "text", "text": "半径为7cm的圆，面积约为153.94平方厘米。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景14: 多模态 — 图片描述",
+    "_scenario": "image_caption",
+    "messages": [
+      {"role": "user", "blocks": [
+        {"type": "image", "source": {"type": "path", "data": "tests/fixtures/images/red_square.jpg"}},
+        {"type": "text", "text": "描述一下这张图片"}
+      ]},
+      {"role": "assistant", "blocks": [
+        {"type": "text", "text": "图片中是一个红色的方块。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景15: 多模态 — 多张图片比较",
+    "_scenario": "multi_image",
+    "messages": [
+      {"role": "user", "blocks": [
+        {"type": "image", "source": {"type": "path", "data": "tests/fixtures/images/red_square.jpg"}},
+        {"type": "image", "source": {"type": "path", "data": "tests/fixtures/images/blue_224.jpg"}},
+        {"type": "text", "text": "这两张图片有什么区别？"}
+      ]},
+      {"role": "assistant", "blocks": [
+        {"type": "text", "text": "第一张是红色方块，第二张是蓝色方块，颜色和尺寸不同。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景16: 全量训练（train_on_inputs）— 所有 token 都计算 loss",
+    "_scenario": "train_on_inputs",
+    "loss_config": {
+      "role_defaults": {"system": 1, "user": 1, "assistant": 1, "tool": 1},
+      "history": "all"
+    },
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "你好"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "你好！"}]}
+    ]
+  },
+
+  {
+    "_comment": "场景17: 单个 block 级 weight 覆盖",
+    "_scenario": "block_weight_override",
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "写一首诗"}]},
+      {"role": "assistant", "blocks": [
+        {"type": "text", "text": "好的，以下是一首关于春天的诗：\n\n", "weight": 0},
+        {"type": "text", "text": "春风拂柳绿如丝，\n细雨润花红似霞。\n燕子归来寻旧巢，\n人间处处是芳华。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景18: 长多轮对话（5轮）+ decay 策略",
+    "_scenario": "long_multi_turn_decay",
+    "loss_config": {"history": "decay", "history_decay": 0.5},
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "帮我写一个Python函数"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "好的，请问需要什么功能？"}]},
+      {"role": "user", "blocks": [{"type": "text", "text": "排序算法"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "推荐用快速排序。要我写吗？"}]},
+      {"role": "user", "blocks": [{"type": "text", "text": "好的，用Python写"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    pivot = arr[0]\n    left = [x for x in arr[1:] if x <= pivot]\n    right = [x for x in arr[1:] if x > pivot]\n    return quicksort(left) + [pivot] + quicksort(right)"}]},
+      {"role": "user", "blocks": [{"type": "text", "text": "加上类型注解"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "def quicksort(arr: list[int]) -> list[int]:\n    if len(arr) <= 1:\n        return arr\n    pivot = arr[0]\n    left = [x for x in arr[1:] if x <= pivot]\n    right = [x for x in arr[1:] if x > pivot]\n    return quicksort(left) + [pivot] + quicksort(right)"}]},
+      {"role": "user", "blocks": [{"type": "text", "text": "写个测试"}]},
+      {"role": "assistant", "blocks": [{"type": "text", "text": "assert quicksort([]) == []\nassert quicksort([1]) == [1]\nassert quicksort([3,1,2]) == [1,2,3]\nassert quicksort([5,3,8,1,2]) == [1,2,3,5,8]\nprint('All tests passed!')"}]}
+    ]
+  },
+
+  {
+    "_comment": "场景19: 多轮工具调用（连续两次调用不同工具）",
+    "_scenario": "sequential_tool_calls",
+    "system": "你是一个旅行助手。",
+    "tools": [
+      {"name": "get_weather", "description": "获取天气", "input_schema": {"type": "object", "properties": {"city": {"type": "string"}}, "required": ["city"]}},
+      {"name": "search_hotel", "description": "搜索酒店", "input_schema": {"type": "object", "properties": {"city": {"type": "string"}, "date": {"type": "string"}}, "required": ["city", "date"]}}
+    ],
+    "loss_config": {"history": "last"},
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "我想下周去杭州，帮我查天气和酒店"}]},
+      {"role": "assistant", "blocks": [
+        {"type": "text", "text": "好的，我来帮你查询杭州的信息。"},
+        {"type": "tool_use", "id": "c1", "name": "get_weather", "input": {"city": "杭州"}}
+      ]},
+      {"role": "tool", "blocks": [
+        {"type": "tool_result", "tool_use_id": "c1", "text": "{\"forecast\": \"多云转晴，22-28°C\"}"}
+      ]},
+      {"role": "assistant", "blocks": [
+        {"type": "text", "text": "杭州下周天气不错，我再帮你查酒店。"},
+        {"type": "tool_use", "id": "c2", "name": "search_hotel", "input": {"city": "杭州", "date": "2026-04-07"}}
+      ]},
+      {"role": "tool", "blocks": [
+        {"type": "tool_result", "tool_use_id": "c2", "text": "{\"hotels\": [{\"name\": \"西湖大酒店\", \"price\": 580}, {\"name\": \"灵隐客栈\", \"price\": 320}]}"}
+      ]},
+      {"role": "assistant", "blocks": [
+        {"type": "text", "text": "杭州下周天气多云转晴，22-28°C，非常适合出行。\n\n推荐酒店：\n1. 西湖大酒店 - ¥580/晚\n2. 灵隐客栈 - ¥320/晚"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景20: 多模态 + 思考 + 工具调用（复合场景）",
+    "_scenario": "multimodal_thinking_tool",
+    "system": "你是一个图片分析助手，可以识别图片中的物品并查询信息。",
+    "tools": [
+      {"name": "identify_object", "description": "识别物品", "input_schema": {"type": "object", "properties": {"description": {"type": "string"}}, "required": ["description"]}}
+    ],
+    "loss_config": {"type_overrides": {"thinking": 0.5}},
+    "messages": [
+      {"role": "user", "blocks": [
+        {"type": "image", "source": {"type": "path", "data": "tests/fixtures/images/gradient.jpg"}},
+        {"type": "text", "text": "这是什么花？"}
+      ]},
+      {"role": "assistant", "blocks": [
+        {"type": "thinking", "text": "图片中是一朵粉色的花，花瓣呈层叠状，像是牡丹或芍药。让我用工具确认一下。"},
+        {"type": "tool_use", "id": "c1", "name": "identify_object", "input": {"description": "粉色层叠花瓣的花朵"}}
+      ]},
+      {"role": "tool", "blocks": [
+        {"type": "tool_result", "tool_use_id": "c1", "text": "{\"name\": \"芍药\", \"family\": \"芍药科\", \"season\": \"春末夏初\"}"}
+      ]},
+      {"role": "assistant", "blocks": [
+        {"type": "thinking", "text": "工具确认是芍药，我来组织回答。"},
+        {"type": "text", "text": "这是一朵芍药花，属于芍药科，花期在春末夏初。芍药与牡丹外形相似，但芍药是草本植物，而牡丹是木本植物。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景21: 纯 assistant（预训练续写式 SFT）",
+    "_scenario": "pretrain_style",
+    "loss_config": {
+      "role_defaults": {"assistant": 1},
+      "history": "all"
+    },
+    "messages": [
+      {"role": "assistant", "blocks": [
+        {"type": "text", "text": "在一个阳光明媚的早晨，小猫咪坐在窗台上，看着窗外的小鸟飞来飞去。它轻轻地摇了摇尾巴，然后跳下了窗台，开始了新一天的冒险。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景22: multi-agent 身份标识",
+    "_scenario": "multi_agent",
+    "system": "这是一个多智能体协作环境。",
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "请分析这段代码的安全性"}]},
+      {"role": "assistant", "name": "code_reviewer", "blocks": [
+        {"type": "text", "text": "从代码审查角度看，这段代码存在SQL注入风险。"}
+      ]},
+      {"role": "assistant", "name": "security_expert", "blocks": [
+        {"type": "text", "text": "从安全角度确认，建议使用参数化查询替代字符串拼接。"}
+      ]}
+    ]
+  },
+
+  {
+    "_comment": "场景23: 空 blocks（边界情况 — 只有 role 没有内容）",
+    "_scenario": "empty_blocks",
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "测试"}]},
+      {"role": "assistant", "blocks": []}
+    ]
+  },
+
+  {
+    "_comment": "场景24: 超长单 block（截断测试用）",
+    "_scenario": "long_single_block",
+    "messages": [
+      {"role": "user", "blocks": [{"type": "text", "text": "写一篇关于人工智能的长文"}]},
+      {"role": "assistant", "blocks": [
+        {"type": "text", "text": "人工智能（Artificial Intelligence，简称AI）是计算机科学的一个分支，致力于创建能够模拟人类智能行为的系统。从早期的专家系统到现代的深度学习，AI的发展经历了多个重要阶段。在1950年代，Alan Turing提出了著名的图灵测试，为AI研究奠定了理论基础。随后，研究者们开发了各种方法，包括符号推理、机器学习、神经网络等。进入21世纪，随着计算能力的飞速提升和大规模数据的可用性，深度学习取得了突破性进展。卷积神经网络（CNN）在图像识别领域取得了超越人类的表现，循环神经网络（RNN）和Transformer架构则在自然语言处理领域带来了革命性的变化。2017年，Google发表的《Attention Is All You Need》论文提出了Transformer架构，这一架构后来成为了GPT、BERT、LLaMA等大语言模型的基础。这些模型通过在海量文本数据上进行预训练，学会了语言的统计规律和世界知识，能够生成流畅、连贯的文本。当前，AI正在深刻改变各个行业：医疗领域的辅助诊断、金融领域的风险评估、制造业的智能质检、教育领域的个性化学习。然而，AI也面临着诸多挑战，包括可解释性、偏见与公平性、隐私保护、以及对就业市场的影响等。未来，随着多模态模型、具身智能、通用人工智能（AGI）等方向的探索，AI将继续推动人类社会的进步与变革。"}
+      ]}
+    ]
+  }
+]

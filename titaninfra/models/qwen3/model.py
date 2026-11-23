@@ -1,0 +1,114 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+#
+# Copyright (c) Meta Platforms, Inc. All Rights Reserved.
+
+from dataclasses import dataclass, field
+
+import torch
+import torch_remat as remat
+from torchtitan.distributed.local_compile import LocalCompileConfig
+from torchtitan.models.common.attention import AttentionMetadataMap
+from torchtitan.models.common.decoder import Decoder, TransformerBlock
+from torchtitan.models.common.moe import MoE
+
+from .state_dict_adapter import Qwen3StateDictAdapter
+
+
+class Qwen3TransformerBlock(TransformerBlock):
+    """
+    Qwen3 TransformerBlock Module
+
+    Args:
+        layer_id (int): Identifier for the layer.
+        dim (int): Model dimension.
+        n_layers (int): Total number of layers.
+        config (Qwen3TransformerBlock.Config): Block configuration.
+    """
+
+    @dataclass(kw_only=True, slots=True)
+    class Config(TransformerBlock.Config):
+        pass
+
+    def __init__(self, config: Config):
+        super().__init__()
+
+        self.attention = config.attention.build()
+        self.feed_forward = config.feed_forward.build()
+        self.attention_norm = config.attention_norm.build()
+        self.ffn_norm = config.ffn_norm.build()
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        attention_metadata: AttentionMetadataMap | None,
+        positions: torch.Tensor | None = None,
+        *,
+        padding_mask: torch.Tensor | None = None,
+        aux_loss_denominator: torch.Tensor | None = None,
+    ):
+        attn_out = self.attention(self.attention_norm(x), attention_metadata, positions)
+        # The residual add reads the attention output with bare ops.
+        remat.recompute_needs_tensor(attn_out)
+        x = x + attn_out
+
+        if isinstance(self.feed_forward, MoE):
+            ffn_out = self.feed_forward(
+                self.ffn_norm(x),
+                padding_mask_T=padding_mask,
+                aux_loss_denominator=aux_loss_denominator,
+            )
+        else:
+            del padding_mask, aux_loss_denominator
+            ffn_out = self.feed_forward(self.ffn_norm(x))
+        # Trailing add, always saved: it saves nothing for backward, so replay
+        # skips it and its inputs need no persisting, matching checkpoint
+        # early stop.
+        return remat.region(
+            torch.add, self.remat_region_name("ffn_residual"), recompute=False
+        )(x, ffn_out)
+
+
+class Qwen3Model(Decoder):
+    """
+    Qwen3Model Module
+
+    Args:
+        config (Qwen3Model.Config): Model configuration.
+    """
+
+    state_dict_adapter_cls = Qwen3StateDictAdapter
+
+    @classmethod
+    def _register_optimizer_hooks(
+        cls, optimizers, model_parts, parallelism_context
+    ) -> None:
+        from torchtitan.models.common.aux_loss import register_aux_loss_zero_hook
+        from torchtitan.models.common.moe import register_moe_load_balancing_hook
+
+        register_moe_load_balancing_hook(optimizers, model_parts, parallelism_context)
+        register_aux_loss_zero_hook(optimizers, model_parts, parallelism_context)
+
+    @dataclass(kw_only=True, slots=True)
+    class Config(Decoder.Config):
+        dim: int = 1024
+        vocab_size: int = 151936
+        # Declare the shared compile boundaries used by this model. These names
+        # correspond to CosSinRoPE and common activation/loss/linear modules;
+        # keeping the complete list ensures selective remat follows upstream.
+        local_compile: LocalCompileConfig = field(
+            default_factory=lambda: LocalCompileConfig(
+                regions=[
+                    "loss",
+                    "fused_binary_activation",
+                    "rope",
+                    "fp32_to_bf16_split",
+                ]
+            )
+        )
+
+    def __init__(self, config: Config):
+        super().__init__(config)
