@@ -2,7 +2,7 @@
 
 [English](../en/training.md) · [README](../../README.zh-CN.md)
 
-我们使用同一个 TorchTitan 引擎执行 Pretrain、SFT 和 CPT。训练阶段由数据流决定，因此你可以在不同 recipe 中共用模型与分布式配置。
+我们使用同一个 TorchTitan 引擎执行 Pretrain、SFT 和 CPT。训练阶段由数据流决定，因此你可以在不同 recipe 中共用模型与分布式配置。全部字段见[配置参考](config.md)。
 
 ## 1. 准备 MDS 数据
 

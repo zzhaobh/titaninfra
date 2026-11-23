@@ -1,6 +1,6 @@
 # API Reference
 
-[简体中文](../zh-CN/api.md) · [README](../../README.md)
+[简体中文](../zh-CN/api.md) · [README](../../README.md) · [Configuration reference](config.md)
 
 We provide a unified API for data conversion, model configuration, training, and checkpoint management. Pretrain, SFT, and CPT share `Trainer`. Our self-developed RL mode is under development and is not yet part of the public API.
 

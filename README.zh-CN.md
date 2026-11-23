@@ -24,13 +24,47 @@ from titaninfra import (
 )
 from titaninfra.data.converter import DataConvertConfig, DataConverter, convert_messages_to_mds
 from titaninfra.data.sft.message_converter import normalize_to_hf_messages, to_ir_messages
-from examples.api_tour import MODEL_DEFAULTS, MODEL_NAMES, build_config
+from examples.api_tour import MODEL_DEFAULTS, MODEL_NAMES
 
 # 用同一套策略定义多个模型家族。
 models = {name: ModelConfig(name=name, **MODEL_DEFAULTS) for name in MODEL_NAMES}
 
 # 混合 Pretrain 文本流 + SFT 消息流（CPT），比例 70%/30%。
-model, train, streams = build_config()
+model = ModelConfig(name="qwen3/debugmodel", **MODEL_DEFAULTS)
+train = TrainConfig(
+    local_batch_size=1,
+    global_batch_size=8,
+    seq_len=4096,
+    steps=1000,
+    optimizer_name="AdamW",
+    lr=3e-4,
+    beta1=0.9,
+    beta2=0.95,
+    eps=1e-8,
+    weight_decay=0.1,
+    optimizer_state_dtype="fp32",
+    min_lr_ratio=0.1,
+    lr_decay_type="cosine",
+    warmup_steps=100,
+    max_grad_norm=1.0,
+)
+streams = [
+    StreamConfig(
+        local="/data/mds/general/train",
+        tokenizer_name="qwen3",
+        data_type="text",
+        proportion=0.7,
+        pack_strategy=PackStrategy.HARD_TRUNCATE,
+    ),
+    StreamConfig(
+        local="/data/mds/sft/train",
+        tokenizer_name="qwen3",
+        data_type="messages",
+        family="qwen3",
+        proportion=0.3,
+        pack_strategy=PackStrategy.FULL_SAMPLE,
+    ),
+]
 rich_messages = [{"role": "user", "blocks": [{"type": "text", "text": "Hello"}]}]
 
 # 文本与 rich message 的 MDS 转换。
@@ -279,6 +313,7 @@ from titaninfra import (
 ## 文档
 
 - [API 参考](docs/zh-CN/api.md)
+- [配置参考](docs/zh-CN/config.md)
 - [数据管道与格式](docs/zh-CN/data.md)
 - [训练与完整 recipe](docs/zh-CN/training.md)
 - [开发与测试](docs/zh-CN/development.md)

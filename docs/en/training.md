@@ -2,7 +2,7 @@
 
 [简体中文](../zh-CN/training.md) · [README](../../README.md)
 
-We use one TorchTitan-backed engine for Pretrain, SFT, and CPT. The data streams determine the training stage, so you can keep the same model and distributed configuration across recipes.
+We use one TorchTitan-backed engine for Pretrain, SFT, and CPT. The data streams determine the training stage, so you can keep the same model and distributed configuration across recipes. See the [configuration reference](config.md) for all fields.
 
 ## 1. Prepare MDS data
 
