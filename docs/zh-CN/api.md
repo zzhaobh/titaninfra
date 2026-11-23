@@ -1,6 +1,6 @@
 # API 参考
 
-[English](../en/api.md) · [README](../../README.zh-CN.md)
+[English](../en/api.md) · [README](../../README.zh-CN.md) · [配置参考](config.md)
 
 我们为 TitanInfra 提供统一的数据转换、模型配置、训练和 checkpoint 管理 API。Pretrain、SFT 和 CPT 共用 `Trainer`。我们的自研 RL 模式仍在开发中，尚未提供公开 API。
 

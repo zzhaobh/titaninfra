@@ -18,10 +18,12 @@ REQUIRED_PUBLIC_DOCS = (
     "README.zh-CN.md",
     "CONTRIBUTING.md",
     "docs/en/api.md",
+    "docs/en/config.md",
     "docs/en/data.md",
     "docs/en/training.md",
     "docs/en/development.md",
     "docs/zh-CN/api.md",
+    "docs/zh-CN/config.md",
     "docs/zh-CN/data.md",
     "docs/zh-CN/training.md",
     "docs/zh-CN/development.md",
@@ -193,7 +195,7 @@ def test_bilingual_doc_pairs_exist() -> None:
     """Every English guide has a Chinese counterpart with the same filename."""
     english = {path.name for path in (REPO_ROOT / "docs" / "en").glob("*.md")}
     chinese = {path.name for path in (REPO_ROOT / "docs" / "zh-CN").glob("*.md")}
-    assert english == {"api.md", "data.md", "training.md", "development.md"}
+    assert english == {"api.md", "config.md", "data.md", "training.md", "development.md"}
     assert chinese == english
     assert (REPO_ROOT / "README.md").is_file()
     assert (REPO_ROOT / "README.zh-CN.md").is_file()

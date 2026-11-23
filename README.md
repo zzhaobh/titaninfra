@@ -25,13 +25,47 @@ from titaninfra import (
 )
 from titaninfra.data.converter import DataConvertConfig, DataConverter, convert_messages_to_mds
 from titaninfra.data.sft.message_converter import normalize_to_hf_messages, to_ir_messages
-from examples.api_tour import MODEL_DEFAULTS, MODEL_NAMES, build_config
+from examples.api_tour import MODEL_DEFAULTS, MODEL_NAMES
 
 # Define several model families with one shared policy.
 models = {name: ModelConfig(name=name, **MODEL_DEFAULTS) for name in MODEL_NAMES}
 
 # Mixed Pretrain text + SFT messages (CPT), with 70%/30% proportions.
-model, train, streams = build_config()
+model = ModelConfig(name="qwen3/debugmodel", **MODEL_DEFAULTS)
+train = TrainConfig(
+    local_batch_size=1,
+    global_batch_size=8,
+    seq_len=4096,
+    steps=1000,
+    optimizer_name="AdamW",
+    lr=3e-4,
+    beta1=0.9,
+    beta2=0.95,
+    eps=1e-8,
+    weight_decay=0.1,
+    optimizer_state_dtype="fp32",
+    min_lr_ratio=0.1,
+    lr_decay_type="cosine",
+    warmup_steps=100,
+    max_grad_norm=1.0,
+)
+streams = [
+    StreamConfig(
+        local="/data/mds/general/train",
+        tokenizer_name="qwen3",
+        data_type="text",
+        proportion=0.7,
+        pack_strategy=PackStrategy.HARD_TRUNCATE,
+    ),
+    StreamConfig(
+        local="/data/mds/sft/train",
+        tokenizer_name="qwen3",
+        data_type="messages",
+        family="qwen3",
+        proportion=0.3,
+        pack_strategy=PackStrategy.FULL_SAMPLE,
+    ),
+]
 rich_messages = [{"role": "user", "blocks": [{"type": "text", "text": "Hello"}]}]
 
 # MDS conversion for text and rich messages.
@@ -284,6 +318,7 @@ from titaninfra import (
 ## Documentation
 
 - [API reference](docs/en/api.md)
+- [Configuration reference](docs/en/config.md)
 - [Data pipeline and formats](docs/en/data.md)
 - [Training and complete recipes](docs/en/training.md)
 - [Development and testing](docs/en/development.md)
