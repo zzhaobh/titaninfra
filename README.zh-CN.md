@@ -225,6 +225,22 @@ docker run --rm --gpus all -it \
 `docker build` 和 `docker run` 时加上 `--platform=linux/amd64`，因为 NVIDIA
 CUDA/cuDNN 镜像面向 amd64。
 
+### 完整上游 GPU 环境
+
+完整的上游依赖栈见
+[docker/titaninfra-full.Dockerfile](docker/titaninfra-full.Dockerfile)。其中保留
+CUDA 13.2.1/cuDNN、PyTorch 2.15、DeepEP、FlashMLA、vLLM、MosaicML Streaming、
+多模态依赖、profiling 工具和运行时检查。根目录 `Dockerfile` 仍是精简标准环境。
+
+```bash
+docker build -f docker/titaninfra-full.Dockerfile -t titaninfra:full .
+docker run --rm --gpus all -it \
+  -v "$PWD:/workspace" -v /data:/data -v /models:/models -v /outputs:/outputs \
+  titaninfra:full
+```
+
+源码、模型和数据资产在运行时挂载，不复制进镜像；仓库不发布预构建镜像。
+
 ## MDS 与 Message 格式转换 API
 
 预训练文本转换：

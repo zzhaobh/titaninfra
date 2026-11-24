@@ -82,7 +82,7 @@ def test_no_forbidden_release_content() -> None:
             continue
         path = REPO_ROOT / relative
         if not path.is_file() or path.suffix.lower() not in {
-            ".py", ".md", ".txt", ".toml", ".sh", ".json", ".jsonl", ".yml", ".yaml",
+            ".py", ".md", ".txt", ".toml", ".sh", ".json", ".jsonl", ".yml", ".yaml", ".dockerfile",
         }:
             continue
         try:
@@ -155,9 +155,26 @@ def test_standard_docker_runtime() -> None:
     assert "mosaicml/streaming.git" in text
     assert "python -m pip install --no-build-isolation --no-deps ." in text
     assert "1381ca1213fc95b6573efb44e5ec9f85c765ce1c" in text
-    dockerfiles = [relative for relative in _tracked_files() if Path(relative).name.lower() == "dockerfile"]
-    assert dockerfiles == ["Dockerfile"]
+    dockerfiles = [
+        relative
+        for relative in _tracked_files()
+        if relative == "Dockerfile" or relative.lower().endswith(".dockerfile")
+    ]
+    assert dockerfiles == ["Dockerfile", "docker/titaninfra-full.Dockerfile"]
     assert (REPO_ROOT / ".dockerignore").is_file()
+
+
+def test_full_gpu_environment_definition() -> None:
+    """The complete upstream GPU environment is public without internal history."""
+    text = (REPO_ROOT / "docker" / "titaninfra-full.Dockerfile").read_text(encoding="utf-8")
+    assert "FROM nvidia/cuda:13.2.1-cudnn-devel-ubuntu24.04" in text
+    assert "TORCH_VERSION=2.15.0" in text
+    assert "FlashMLA" in text
+    assert "DeepEP" in text
+    assert "vllm" in text
+    assert "1381ca1213fc95b6573efb44e5ec9f85c765ce1c" in text
+    assert "docker.m.daocloud.io" not in text
+    assert "verl" not in text.lower()
 
 
 def test_bsd_license_metadata() -> None:

@@ -229,6 +229,24 @@ they are not copied into the image. On Apple Silicon, add
 `--platform=linux/amd64` to `docker build` and `docker run` because NVIDIA's
 CUDA/cuDNN images target amd64.
 
+### Full upstream GPU environment
+
+For the complete upstream dependency stack, use
+[docker/titaninfra-full.Dockerfile](docker/titaninfra-full.Dockerfile). It keeps
+the full CUDA 13.2.1/cuDNN environment: PyTorch 2.15, DeepEP, FlashMLA, vLLM,
+MosaicML Streaming, multimodal libraries, profiling tools, and runtime checks.
+The root `Dockerfile` remains the smaller standard environment.
+
+```bash
+docker build -f docker/titaninfra-full.Dockerfile -t titaninfra:full .
+docker run --rm --gpus all -it \
+  -v "$PWD:/workspace" -v /data:/data -v /models:/models -v /outputs:/outputs \
+  titaninfra:full
+```
+
+Mount the source checkout and model/data assets at runtime; they are not copied
+into the image. No prebuilt image is published by this repository.
+
 ## MDS and Message conversion APIs
 
 Pretrain text conversion:
