@@ -143,6 +143,49 @@ Trainer → DCP checkpoints → resume or HF export
 
 See the [data pipeline guide](docs/en/data.md) for schemas, conversion APIs, packing constraints, and scheduling combinations.
 
+## Repository map
+
+We organize the repository around data streams. Use this map to find the right
+entry point instead of reading the whole tree first.
+
+| Area | What it does | Main entry points |
+|---|---|---|
+| **Configuration** | Pydantic model, training, and stream configs with explicit algorithm fields. | `titaninfra/config/`, [Configuration reference](docs/en/config.md) |
+| **MDS conversion** | Converts JSONL/Parquet into balanced MDS shards and exact `stream_stats.json`. | `titaninfra/data/converter.py`, `recompute_stats.py`, [Conversion APIs](docs/en/api.md#mds-conversion-apis) |
+| **Runtime data pipeline** | MDS loading, token-aware epoch sizing, packing, mixing, and DP-aware sharding. | `streaming_dataset.py`, `packer.py`, `token_estimator.py` |
+| **Message system** | Training-native rich blocks, loss masks, history policy, thinking/effort, tools, and HF/IR conversion. | `data/schema.py`, `sft/dispatch.py`, `sft/message_converter.py`, [Message guide](docs/en/data.md#message-system-schema) |
+| **Multimodal data** | Lance/image decoding, patch/token estimation, image decode pooling, and multimodal collation. | `titaninfra/data/multimodal/` |
+| **Training engine** | One engine for Pretrain, SFT, and CPT with shared model, optimizer, checkpoint, and data-loader setup. | `titaninfra/trainer.py`, `engine/pretrain.py`, `engine/train_step.py` |
+| **Model registry** | Family configs, attention/model implementations, sharding, and HF/DCP adapters. | `titaninfra/models/`, `engine/pretrain.py::_load_model_spec` |
+| **Distributed runtime** | FSDP2/HSDP, TP/CP/EP declarations, compilation, and upstream compatibility. | `titaninfra/distributed/` |
+| **Custom kernels** | Opt-in GPU kernels with registration, wiring, parity checks, and fallback paths. | `titaninfra/kernels/` |
+| **Optimizers** | Muon, mixed Muon+AdamW, parameter groups, and QK-Clip. | `titaninfra/optimizers/` |
+| **Monitoring** | MoE health, auxiliary load balancing, and singular-value entropy. | `titaninfra/monitoring/` |
+| **Profiling** | torch.profiler integration, trace analysis, and operator efficiency attribution. | `titaninfra/profiling/` |
+| **Checkpoint conversion** | DCP ↔ Hugging Face safetensors using model-specific state-dict adapters. | `titaninfra/convert.py` |
+| **Tools** | Asset download, HF diagnosis, loss comparison, and training checks. | `titaninfra/tools/` |
+| **Utilities** | Resume setup, WandB, metric plugins, and NEFTune. | `titaninfra/utils/` |
+| **Examples and scripts** | Complete API tour, Pretrain/SFT recipes, conversion, inspection, and launch helpers. | `examples/`, `scripts/` |
+| **Tests and fixtures** | CPU/GPU regressions, native encoder oracles, scheduling, and release checks. | `tests/`, [Development guide](docs/en/development.md) |
+
+### Model families
+
+Family support is configuration-specific; this table is a navigation guide, not a
+claim that every parallel/kernel combination is validated for every family.
+
+| Family | Architecture and typical use |
+|---|---|
+| **Qwen3** | Dense and MoE GQA models with native Qwen3 messages and thinking/history support. |
+| **Qwen2.5** | Dense GQA with QKV biases, FSDP2, and native messages. |
+| **Llama3** | Dense GQA, position-aware document masks, and native messages. |
+| **DeepSeek V3** | MLA + MoE, group-limited routing, shared experts, and Kimi/Moonlight variants. |
+| **DeepSeek V4** | CSA/HCA compressed attention, MoE, MTP/hyper-connections, and custom gather kernels. |
+| **GPT-OSS** | Attention-sink and MoE variants, Harmony/native messages, and reasoning effort. |
+| **Gemma4** | Sliding/full hybrid attention, parallel MLP+MoE, GELU experts, and weight tying. |
+| **Qwen3.5** | GatedDeltaNet/full-attention hybrid decoder, vision encoder, MRoPE, and multimodal training. |
+| **Kimi-VL** | MoonViT vision tower + projector + DeepSeek-V3 language tower. |
+| **TorchTitan fallback** | Additional families such as Llama4 when TitanInfra does not provide a native registry. |
+
 ## Custom GPU kernels
 
 We also maintain custom GPU kernels for selected compressed-attention, vision,

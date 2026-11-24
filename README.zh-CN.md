@@ -142,6 +142,49 @@ Trainer → DCP checkpoint → 恢复训练或导出 HF
 
 数据 schema、转换 API、packing 限制与调度组合见[数据管道指南](docs/zh-CN/data.md)。
 
+## 仓库模块地图
+
+我们以数据流为中心组织仓库。先看这张地图，就能快速找到入口，不必从
+整个源码树开始阅读。
+
+| 模块 | 作用 | 主要入口 |
+|---|---|---|
+| **配置系统** | Pydantic 模型、训练和流配置，算法字段显式声明。 | `titaninfra/config/`、[配置参考](docs/zh-CN/config.md) |
+| **MDS 转换** | 将 JSONL/Parquet 转为均衡 MDS shard 和精确 `stream_stats.json`。 | `titaninfra/data/converter.py`、`recompute_stats.py`、[转换 API](docs/zh-CN/api.md#mds-格式转换-api) |
+| **运行时数据管道** | MDS 加载、token-aware epoch sizing、packing、混合和 DP 感知分片。 | `streaming_dataset.py`、`packer.py`、`token_estimator.py` |
+| **Message 系统** | 训练原生 rich blocks、loss mask、history policy、thinking/effort、tools 和 HF/IR 转换。 | `data/schema.py`、`sft/dispatch.py`、`sft/message_converter.py`、[Message 指南](docs/zh-CN/data.md#message-系统-schema) |
+| **多模态数据** | Lance/图像解码、patch/token 估算、decode pool 和多模态 collate。 | `titaninfra/data/multimodal/` |
+| **训练引擎** | Pretrain、SFT、CPT 共用一套模型、优化器、checkpoint 和 data-loader 装配。 | `titaninfra/trainer.py`、`engine/pretrain.py`、`engine/train_step.py` |
+| **模型注册** | 家族配置、attention/model 实现、sharding 和 HF/DCP adapter。 | `titaninfra/models/`、`engine/pretrain.py::_load_model_spec` |
+| **分布式运行时** | FSDP2/HSDP、TP/CP/EP 声明、编译和上游兼容层。 | `titaninfra/distributed/` |
+| **自研 kernels** | 可选 GPU kernel，提供注册、接入、parity 校验和回退路径。 | `titaninfra/kernels/` |
+| **优化器** | Muon、Muon+AdamW 混合优化器、参数组和 QK-Clip。 | `titaninfra/optimizers/` |
+| **监控** | MoE 健康度、辅助负载均衡和奇异值熵。 | `titaninfra/monitoring/` |
+| **Profiling** | torch.profiler、trace 分析和算子效率归因。 | `titaninfra/profiling/` |
+| **Checkpoint 转换** | 通过家族 state-dict adapter 在 DCP 与 HF safetensors 之间转换。 | `titaninfra/convert.py` |
+| **工具** | 资产下载、HF 诊断、loss 对比和训练检查。 | `titaninfra/tools/` |
+| **通用工具** | resume、WandB、metrics plugin 和 NEFTune。 | `titaninfra/utils/` |
+| **示例与脚本** | API tour、Pretrain/SFT recipe、转换、检查和启动工具。 | `examples/`、`scripts/` |
+| **测试与 fixture** | CPU/GPU 回归、原生 encoder oracle、调度和 release 检查。 | `tests/`、[开发指南](docs/zh-CN/development.md) |
+
+### 模型家族
+
+下表用于导航，不表示每个家族的所有并行/kernel 组合都已验证。具体能力
+以对应配置和测试为准。
+
+| 家族 | 架构与典型用途 |
+|---|---|
+| **Qwen3** | Dense 和 MoE GQA，支持原生 Qwen3 messages 与 thinking/history。 |
+| **Qwen2.5** | 带 QKV bias 的 Dense GQA，支持 FSDP2 和原生 messages。 |
+| **Llama3** | Dense GQA、position-aware 文档 mask 和原生 messages。 |
+| **DeepSeek V3** | MLA + MoE、分组路由、shared experts，以及 Kimi/Moonlight 变体。 |
+| **DeepSeek V4** | CSA/HCA 压缩注意力、MoE、MTP/hyper-connections 和自研 gather kernels。 |
+| **GPT-OSS** | Attention-sink 与 MoE 变体、Harmony/native messages 和 reasoning effort。 |
+| **Gemma4** | Sliding/full 混合注意力、并行 MLP+MoE、GELU experts 和 weight tying。 |
+| **Qwen3.5** | GatedDeltaNet/full-attention 混合 decoder、vision encoder、MRoPE 和多模态训练。 |
+| **Kimi-VL** | MoonViT 视觉塔 + projector + DeepSeek-V3 语言塔。 |
+| **TorchTitan fallback** | TitanInfra 未提供原生 registry 时接入 Llama4 等其他家族。 |
+
 ## 自研 GPU kernels
 
 项目还包含自研 GPU kernels，用于压缩注意力、视觉和 MoE 等特定计算路径，
