@@ -175,6 +175,7 @@ def test_full_gpu_environment_definition() -> None:
     assert "1381ca1213fc95b6573efb44e5ec9f85c765ce1c" in text
     assert "docker.m.daocloud.io" not in text
     assert "verl" not in text.lower()
+    assert not re.search(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]", text), "Dockerfile text must be English"
 
 
 def test_bsd_license_metadata() -> None:
