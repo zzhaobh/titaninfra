@@ -10,6 +10,24 @@
 
 我们做 TitanInfra，是为了让大模型训练数据更容易组合、扩展和恢复。我们基于 TorchTitan 统一 Pretrain、SFT 和 CPT，让你可以保留模型与分布式策略，灵活调整文本流、消息流、packing、混合方式和 checkpoint。我们的自研 RL 模式仍在开发中，目前尚未提供公开 API。
 
+## 项目目标
+
+我们要把 TitanInfra 从零构建成一个完整的 LLM 训练框架，而不是微调工具的
+薄封装。我们以 TorchTitan 作为分布式运行时，目标是让用户从**随机初始化
+预训练（from-scratch pretraining）**开始，在同一套编程模型中完成 SFT 和 CPT。
+
+| 目标领域 | 我们提供的能力 |
+|---|---|
+| **分布式数据调度** | DP 感知分片、token-aware epoch/step sizing、`proportion`/`repeat`/`choose` 混合、packing 和确定性恢复。 |
+| **数据策略** | MDS 转换、精确 token 统计、两层 packing、history/turn 策略、优化器与 LR 调度、精度控制。 |
+| **后训练 Message 系统** | 原生 family encoder、rich message blocks、loss mask、thinking/effort、tools、history，以及 Pretrain+SFT 混合流。 |
+| **MoE 与参数可视化** | Expert 利用率、不均衡/dead-expert 检测、expert-bias 生命周期和 MoE 健康指标。 |
+| **模型参数与计算统计** | 参数量/FLOP 估算、通过奇异值熵观察参数分布变化、MFU/profiling 和算子归因。 |
+
+完整链路是 **数据准备 → 模型定义 → 分布式执行 → checkpoint/export →
+监控与诊断**。下面的章节会用具体 API 和 recipe 展示这些能力，而不是把它们
+拆成彼此独立的产品。
+
 ## 一个 Python 示例看遍公开 API
 
 我们把完整、可安全导入的示例放在 [examples/api_tour.py](examples/api_tour.py)。

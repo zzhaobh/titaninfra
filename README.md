@@ -10,6 +10,25 @@
 
 We built TitanInfra to make large-model training data easier to compose, scale, and resume. We build on TorchTitan and unify Pretrain, SFT, and CPT, so you can keep your model and distributed strategy while changing text and message streams, packing, mixing, and checkpoints. Our self-developed RL mode is under development and does not yet have a public API.
 
+## Project goal
+
+We are building TitanInfra from the ground up as a complete LLM training
+framework—not a thin wrapper around fine-tuning tools. With TorchTitan as the
+distributed runtime, our goal is to take users from **from-scratch pretraining**
+through SFT and CPT with one coherent programming model.
+
+| Goal area | What we provide |
+|---|---|
+| **Distributed data scheduling** | DP-aware sharding, token-aware epoch/step sizing, `proportion`/`repeat`/`choose` mixing, packing, and deterministic resume. |
+| **Data policies** | MDS conversion, exact token statistics, two-layer packing, history/turn policies, optimizer and LR scheduling, and precision controls. |
+| **Post-training Message system** | Native family encoders, rich message blocks, loss masks, thinking/effort, tools, history, and mixed Pretrain+SFT streams. |
+| **MoE and parameter visibility** | Expert utilization, imbalance/dead-expert detection, expert-bias lifecycle, and MoE health metrics. |
+| **Model parameter and compute statistics** | Parameter/FLOP estimation, singular-value entropy to observe changes in parameter distributions, MFU/profiling, and operator attribution. |
+
+The full path is **data preparation → model definition → distributed execution →
+checkpoint/export → monitoring and diagnosis**. The sections below show the
+concrete APIs and recipes rather than treating these as separate products.
+
 ## One Python example: the public API tour
 
 We put the complete, import-safe tour in [examples/api_tour.py](examples/api_tour.py).

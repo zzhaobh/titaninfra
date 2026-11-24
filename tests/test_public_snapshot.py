@@ -292,6 +292,12 @@ def test_readme_release_focus() -> None:
             assert target in text, f"{relative} does not link {target}"
         for topic in ("proportion", "repeat", "choose", "pack", "stream_stats.json"):
             assert topic in text, f"{relative} lacks {topic}"
+        if relative == "README.md":
+            assert "from-scratch pretraining" in text
+            assert "singular-value entropy" in text
+        else:
+            assert "从零构建" in text
+            assert "奇异值熵" in text
 
 
 def test_no_removed_doc_links() -> None:
