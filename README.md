@@ -378,6 +378,8 @@ from titaninfra import (
 
 ## Documentation
 
+- [Architecture guide](docs/en/architecture.md)
+- [Research and design rationale](docs/en/research.md)
 - [API reference](docs/en/api.md)
 - [Configuration reference](docs/en/config.md)
 - [Data pipeline and formats](docs/en/data.md)

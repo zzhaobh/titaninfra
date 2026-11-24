@@ -371,6 +371,8 @@ from titaninfra import (
 
 ## 文档
 
+- [架构指南（英文）](docs/en/architecture.md)
+- [研究与设计动机（英文）](docs/en/research.md)
 - [API 参考](docs/zh-CN/api.md)
 - [配置参考](docs/zh-CN/config.md)
 - [数据管道与格式](docs/zh-CN/data.md)

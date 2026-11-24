@@ -1,6 +1,6 @@
 # Development and Testing
 
-[简体中文](../zh-CN/development.md) · [README](../../README.md)
+[简体中文](../zh-CN/development.md) · [README](../../README.md) · [Architecture](architecture.md) · [Research](research.md)
 
 ## Environment
 

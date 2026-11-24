@@ -22,6 +22,8 @@ REQUIRED_PUBLIC_DOCS = (
     "docs/en/data.md",
     "docs/en/training.md",
     "docs/en/development.md",
+    "docs/en/architecture.md",
+    "docs/en/research.md",
     "docs/zh-CN/api.md",
     "docs/zh-CN/config.md",
     "docs/zh-CN/data.md",
@@ -210,11 +212,12 @@ def _markdown_links(path: Path) -> list[str]:
 
 
 def test_bilingual_doc_pairs_exist() -> None:
-    """Every English guide has a Chinese counterpart with the same filename."""
+    """Required bilingual pairs exist; architecture and research are English-only."""
     english = {path.name for path in (REPO_ROOT / "docs" / "en").glob("*.md")}
     chinese = {path.name for path in (REPO_ROOT / "docs" / "zh-CN").glob("*.md")}
-    assert english == {"api.md", "config.md", "data.md", "training.md", "development.md"}
-    assert chinese == english
+    required = {"api.md", "config.md", "data.md", "training.md", "development.md"}
+    assert required <= english
+    assert required <= chinese
     assert (REPO_ROOT / "README.md").is_file()
     assert (REPO_ROOT / "README.zh-CN.md").is_file()
 
@@ -250,11 +253,42 @@ def test_markdown_links_resolve() -> None:
     assert not broken, "broken local Markdown links:\n" + "\n".join(broken)
 
 
+def test_architecture_guide_is_complete() -> None:
+    """The consolidated architecture guide covers the full system path."""
+    path = REPO_ROOT / "docs" / "en" / "architecture.md"
+    text = path.read_text(encoding="utf-8")
+    for section in ("Data streams", "Message system", "Model adaptation", "Distributed execution"):
+        assert section in text, f"architecture guide lacks {section}"
+
+
+def test_research_guide_is_complete() -> None:
+    """The consolidated research guide covers the main design rationales."""
+    path = REPO_ROOT / "docs" / "en" / "research.md"
+    text = path.read_text(encoding="utf-8")
+    for section in ("Native training encoders", "Muon", "Multimodal", "Tool use"):
+        assert section in text, f"research guide lacks {section}"
+
+
+def test_research_guides_are_linked_from_navigation() -> None:
+    """README, API, and development navigation link both complete guides."""
+    for relative in ("README.md", "README.zh-CN.md"):
+        text = (REPO_ROOT / relative).read_text(encoding="utf-8")
+        assert "docs/en/architecture.md" in text
+        assert "docs/en/research.md" in text
+    for relative in ("docs/en/api.md", "docs/en/development.md"):
+        text = (REPO_ROOT / relative).read_text(encoding="utf-8")
+        assert "architecture.md" in text
+        assert "research.md" in text
+
+
 def test_readme_release_focus() -> None:
     """Both READMEs lead with the data pipeline and complete recipes."""
     for relative, data_guide in (("README.md", "docs/en/data.md"), ("README.zh-CN.md", "docs/zh-CN/data.md")):
         text = (REPO_ROOT / relative).read_text(encoding="utf-8")
-        for target in ("examples/api_tour.py", "examples/pretrain.py", "examples/sft.py", data_guide, "LICENSE"):
+        for target in (
+            "examples/api_tour.py", "examples/pretrain.py", "examples/sft.py",
+            "docs/en/architecture.md", "docs/en/research.md", data_guide, "LICENSE",
+        ):
             assert target in text, f"{relative} does not link {target}"
         for topic in ("proportion", "repeat", "choose", "pack", "stream_stats.json"):
             assert topic in text, f"{relative} lacks {topic}"
