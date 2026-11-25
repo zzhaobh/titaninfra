@@ -153,7 +153,7 @@ def test_standard_docker_runtime() -> None:
     text = (REPO_ROOT / "Dockerfile").read_text(encoding="utf-8")
     assert "FROM nvidia/cuda:13.2.0-cudnn-devel-ubuntu24.04" in text
     assert "python3-venv" in text
-    assert "692c9bb5b26f606e5fb739acd55effb6f8850bc9" in text
+    assert "72e5566782bbdafaa9bafd422733a307319213c5" in text
     assert 'pip install --no-deps -e ".[data]"' in text
     assert "requirements.txt" in text
     assert "mosaicml/streaming.git" in text

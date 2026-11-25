@@ -16,7 +16,7 @@ ENV PATH=/opt/venv/bin:$PATH
 WORKDIR /opt
 RUN git init /opt/torchtitan \
     && git -C /opt/torchtitan remote add origin https://github.com/pytorch/torchtitan.git \
-    && git -C /opt/torchtitan -c http.version=HTTP/1.1 fetch --depth 1 origin 692c9bb5b26f606e5fb739acd55effb6f8850bc9 \
+    && git -C /opt/torchtitan -c http.version=HTTP/1.1 fetch --depth 1 origin 72e5566782bbdafaa9bafd422733a307319213c5 \
     && git -C /opt/torchtitan checkout FETCH_HEAD
 
 WORKDIR /workspace

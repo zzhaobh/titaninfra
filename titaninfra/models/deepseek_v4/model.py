@@ -151,6 +151,45 @@ class DeepSeekV4Attention(Attention):
         attn_sink_init: float = 0.0
         norm_eps: float = 1e-6
 
+        def flops(self, positions: torch.Tensor) -> int:
+            """Count windowed and compressed attention for the new Decoder API."""
+            from torchtitan.models.common.flops import quadratic_attention_flops
+
+            # A causal query at document position p attends to p + 1 keys,
+            # at most window_size of them uncompressed. Local sliding layers
+            # use a generic inner-attention config, so the shared local field
+            # is the portable source for every layer type.
+            num_keys = positions + 1
+            attention_op_flops = quadratic_attention_flops(
+                num_heads=self.n_heads,
+                qk_head_dim=self.head_dim,
+                v_head_dim=self.head_dim,
+                num_keys=num_keys.clamp(max=self.sliding_window),
+            )
+
+            if self.compress_rate > 1:
+                num_compressed_keys = num_keys // self.compress_rate
+                if self.compress_rate == 4:
+                    # The indexer scores every compressed key; attention reads
+                    # only the top-k.
+                    attention_op_flops += (
+                        6
+                        * self.index_n_heads
+                        * self.index_head_dim
+                        * int(num_compressed_keys.sum())
+                    )
+                    assert self.indexer is not None
+                    num_compressed_keys = num_compressed_keys.clamp(
+                        max=self.indexer.inner_indexer.topk
+                    )
+                attention_op_flops += quadratic_attention_flops(
+                    num_heads=self.n_heads,
+                    qk_head_dim=self.head_dim,
+                    v_head_dim=self.head_dim,
+                    num_keys=num_compressed_keys,
+                )
+            return attention_op_flops
+
         def __post_init__(self):
             # dataclass(slots=True) replaces the class, so zero-arg super is invalid.
             Attention.Config.__post_init__(self)
@@ -772,37 +811,43 @@ class DeepSeekV4Model(Decoder):
     def _apply_fsdp(self, *, parallelism_context, precision, parallelism) -> None:
         """Apply per-layer MoE-aware FSDP to the structural-only MTP blocks.
 
-        Generic Decoder FSDP leaves ``self.mtp`` to root dense-only wrapping,
-        which misclassifies its EP-sharded expert weights when EP spans every
-        rank. Mirror upstream DeepSeekV4Model and reuse its MTP helper, which
-        temporarily adds the blocks to ``model.layers`` and restores them in
-        ``finally``. The read-only ``mtp_layers`` property avoids registering a
-        second module path, so checkpoint parameter FQNs remain unchanged.
+        Upstream #6289 removed ``apply_fsdp_to_mtp_decoder`` and moved its
+        behavior into ``MTPDecoder._apply_fsdp``. TitanInfra intentionally
+        inherits ``Decoder`` for its structural-only MTP implementation, so it
+        mirrors that small lifecycle adapter locally: temporarily append the
+        blocks to ``model.layers``, call the real Decoder FSDP path, and
+        restore the module tree in ``finally``. The read-only ``mtp_layers``
+        property avoids registering a second module path, so checkpoint
+        parameter FQNs remain unchanged.
         """
-        from torchtitan.config import TORCH_DTYPE_MAP
-        from torchtitan.distributed.fsdp import (
-            resolve_fsdp_mesh,
-            resolve_sparse_fsdp_mesh,
-        )
-        from torchtitan.models.deepseek_v3.mtp import apply_fsdp_to_mtp_decoder
-
-        dp_mesh, dp_mesh_dims = resolve_fsdp_mesh(parallelism_context)
-        edp_mesh, edp_mesh_dims = resolve_sparse_fsdp_mesh(parallelism_context)
-        apply_fsdp_to_mtp_decoder(
-            self,  # pyrefly: ignore [bad-argument-type]
-            dp_mesh,
-            param_dtype=TORCH_DTYPE_MAP[precision.param_dtype],
-            reduce_dtype=TORCH_DTYPE_MAP[precision.reduce_dtype],
-            pp_enabled=parallelism_context.pp_enabled,
-            cpu_offload=parallelism.fsdp_enable_cpu_offloading,
-            reshard_after_forward_policy=parallelism.fsdp_reshard_after_forward,
-            ep_degree=parallelism_context.ep,
-            edp_mesh=edp_mesh,
-            dp_mesh_dims=dp_mesh_dims,
-            edp_mesh_dims=edp_mesh_dims,
-            symm_mem_scope=parallelism.fsdp_symm_mem_scope,
-            unshard_in_current_stream=parallelism.fsdp_unshard_in_current_stream,
-        )
+        if not self.mtp_layers:
+            return super()._apply_fsdp(
+                parallelism_context=parallelism_context,
+                precision=precision,
+                parallelism=parallelism,
+            )
+        if parallelism.fsdp_unshard_in_current_stream:
+            # Match upstream MTPDecoder: tok_embeddings runs once per MTP
+            # depth, which the explicit decoder prefetch chain cannot model.
+            raise ValueError(
+                "parallelism.fsdp_unshard_in_current_stream is not supported "
+                "for models with MTP layers."
+            )
+        mtp_layer_keys = []
+        try:
+            first_mtp_layer_id = len(self.layers)
+            for i, layer in enumerate(self.mtp_layers):
+                key = str(first_mtp_layer_id + i)
+                self.layers[key] = layer
+                mtp_layer_keys.append(key)
+            super()._apply_fsdp(
+                parallelism_context=parallelism_context,
+                precision=precision,
+                parallelism=parallelism,
+            )
+        finally:
+            for key in mtp_layer_keys:
+                del self.layers[key]
 
     @dataclass(kw_only=True, slots=True)
     class Config(Decoder.Config):

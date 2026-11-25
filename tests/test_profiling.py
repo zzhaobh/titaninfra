@@ -2,8 +2,8 @@
 
 Covers:
 - TrainConfig profiler field defaults and validation
-- build_profiler_config translation
-- patch_profiler monkey-patch logic
+- build_profiler_config translation to per-tool configs
+- Extended Kineto profiler options and lifecycle
 - TraceAnalysis import error handling
 """
 
@@ -82,10 +82,11 @@ class TestProfilerConfig:
 
 
 class TestBuildProfilerConfig:
-    """build_profiler_config correctly translates TrainConfig → Profiler.Config."""
+    """TrainConfig maps to upstream's independent trace/memory tools."""
 
-    def test_field_mapping_logic(self):
-        """Verify the mapping between TrainConfig and Profiler.Config field names."""
+    def test_field_mapping(self):
+        from titaninfra.profiling import build_profiler_config
+
         t = make_test_train_config(
             enable_profiling=True,
             profile_freq=50,
@@ -94,80 +95,108 @@ class TestBuildProfilerConfig:
             profile_skip_first=10,
             profile_export_dir="my_traces",
             profile_memory=True,
-        )
-        assert t.enable_profiling is True
-        assert t.profile_freq == 50
-        assert t.profile_active == 3
-        assert t.profile_warmup == 2
-        assert t.profile_skip_first == 10
-        assert t.profile_export_dir == "my_traces"
-        assert t.profile_memory is True
-
-
-# ═══════════════════════════════════════════════════════════════
-# patch_profiler
-# ═══════════════════════════════════════════════════════════════
-
-
-class TestPatchProfiler:
-    """patch_profiler correctly monkey-patches trainer config."""
-
-    def test_noop_when_profiling_disabled(self):
-        from titaninfra.profiling import patch_profiler
-
-        trainer = MagicMock()
-        config = make_test_train_config(enable_profiling=False)
-        patch_profiler(trainer, config)
-        trainer.config.profiler.build.assert_not_called()
-
-    def test_noop_when_no_extended_features(self):
-        from titaninfra.profiling import patch_profiler
-
-        trainer = MagicMock()
-        original_build = trainer.config.profiler.build
-        config = make_test_train_config(
-            enable_profiling=True,
-            profile_with_flops=False,
-            profile_with_stack=False,
-        )
-        patch_profiler(trainer, config)
-        # build should NOT have been replaced
-        assert trainer.config.profiler.build is original_build
-
-    def test_patches_build_when_flops_enabled(self):
-        from torchtitan.observability.profiler import Profiler
-
-        from titaninfra.profiling import patch_profiler
-
-        trainer = MagicMock()
-        original_method = Profiler.build_torch_profiler
-        config = make_test_train_config(enable_profiling=True, profile_with_flops=True)
-
-        try:
-            patch_profiler(trainer, config)
-            # patch replaces the class method Profiler.build_torch_profiler
-            assert Profiler.build_torch_profiler is not original_method
-        finally:
-            Profiler.build_torch_profiler = original_method
-
-    def test_patches_build_when_stack_enabled(self):
-        from torchtitan.observability.profiler import Profiler
-
-        from titaninfra.profiling import patch_profiler
-
-        trainer = MagicMock()
-        original_method = Profiler.build_torch_profiler
-        config = make_test_train_config(
-            enable_profiling=True,
-            profile_with_flops=False,
+            profile_with_flops=True,
             profile_with_stack=True,
         )
+        config = build_profiler_config(t)
+        assert config.trace is not None
+        assert config.trace.save_folder == "my_traces"
+        assert config.trace.freq == 50
+        assert config.trace.active == 3
+        assert config.trace.warmup == 2
+        assert config.trace.skip_first == 10
+        assert config.trace.with_flops is True
+        assert config.trace.with_stack is True
+        assert config.memory_snapshot is not None
+        assert config.memory_snapshot.freq == 50
 
+    def test_disabled_tools_are_none(self):
+        from titaninfra.profiling import build_profiler_config
+
+        config = build_profiler_config(make_test_train_config())
+        assert config.trace is None
+        assert config.memory_snapshot is None
+
+    def test_memory_snapshot_remains_independent(self):
+        from titaninfra.profiling import build_profiler_config
+
+        config = build_profiler_config(
+            make_test_train_config(enable_profiling=False, profile_memory=True)
+        )
+        assert config.trace is None
+        assert config.memory_snapshot is not None
+
+
+# ═══════════════════════════════════════════════════════════════
+# Extended Kineto profiler
+# ═══════════════════════════════════════════════════════════════
+
+
+class TestExtendedKinetoProfiler:
+    """The real config.build() path injects titaninfra's torch options."""
+
+    def test_build_injects_flops_and_stack(self, monkeypatch, tmp_path):
+        import torch
+
+        from titaninfra.profiling import build_profiler_config
+
+        captured = {}
+
+        class FakeTorchProfiler:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return None
+
+            def step(self):
+                return None
+
+        def fake_profile(*args, **kwargs):
+            captured.update(kwargs)
+            return FakeTorchProfiler()
+
+        monkeypatch.setattr(torch.profiler, "profile", fake_profile)
+        config = build_profiler_config(
+            make_test_train_config(
+                enable_profiling=True,
+                profile_with_flops=True,
+                profile_with_stack=True,
+                profile_freq=10,
+                profile_warmup=2,
+                profile_active=1,
+            )
+        )
+        profiler = config.trace.build(
+            global_step=0,
+            base_folder=str(tmp_path),
+            leaf_folder="",
+            rank=0,
+        )
         try:
-            patch_profiler(trainer, config)
-            assert Profiler.build_torch_profiler is not original_method
+            assert captured["with_flops"] is True
+            assert captured["with_stack"] is True
+            assert profiler._torch_profiler.step_num == 0
         finally:
-            Profiler.build_torch_profiler = original_method
+            profiler.close()
+
+    def test_export_trace_writes_rank0_summary(self, monkeypatch, tmp_path):
+        from titaninfra.profiling.profiler import _extended_kineto_profiler_cls
+
+        profiler_cls = _extended_kineto_profiler_cls()
+        profiler = object.__new__(profiler_cls)
+        profiler._rank = 0
+        profiler._config = profiler_cls.Config(write_rank0_summary=True)
+        monkeypatch.setattr(
+            profiler_cls.__bases__[0],
+            "export_trace",
+            lambda self, prof, trace_dir: None,
+        )
+        table = MagicMock(return_value="summary table")
+        prof = MagicMock()
+        prof.key_averages.return_value.table = table
+        profiler.export_trace(prof, str(tmp_path))
+        assert (tmp_path / "summary_rank0.txt").read_text() == "summary table"
 
 
 # ═══════════════════════════════════════════════════════════════

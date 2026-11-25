@@ -276,7 +276,7 @@ python -m pip install -r requirements.txt
 
 # 安装已验证的公开 TorchTitan 运行时。
 git clone https://github.com/pytorch/torchtitan.git ../torchtitan
-git -C ../torchtitan checkout 692c9bb5b26f606e5fb739acd55effb6f8850bc9
+git -C ../torchtitan checkout 72e5566782bbdafaa9bafd422733a307319213c5
 python -m pip install --no-deps -e ../torchtitan
 
 # 从源码安装 MosaicML Streaming，避开旧版 Transformers<5 元数据限制。

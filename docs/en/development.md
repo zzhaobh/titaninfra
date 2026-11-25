@@ -19,7 +19,7 @@ python -m pip install -r requirements-dev.txt
 
 # Compatible public TorchTitan runtime.
 git clone https://github.com/pytorch/torchtitan.git ../torchtitan
-git -C ../torchtitan checkout 692c9bb5b26f606e5fb739acd55effb6f8850bc9
+git -C ../torchtitan checkout 72e5566782bbdafaa9bafd422733a307319213c5
 python -m pip install --no-deps -e ../torchtitan
 
 # Install MDS streaming from source to avoid its legacy Transformers<5 cap.

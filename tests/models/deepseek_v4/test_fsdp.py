@@ -13,7 +13,6 @@ def test_mtp_blocks_receive_decoder_fsdp_and_restore_module_tree(monkeypatch):
     """MTP blocks must not fall through to root dense-only FSDP wrapping."""
     import torch
     import torchtitan.distributed.fsdp as decoder_fsdp
-    import torchtitan.models.deepseek_v3.mtp as mtp_fsdp
     from torchtitan.config import PrecisionConfig
     from torchtitan.config.parallelism import ParallelismConfig
 
@@ -41,10 +40,11 @@ def test_mtp_blocks_receive_decoder_fsdp_and_restore_module_tree(monkeypatch):
         "resolve_sparse_fsdp_mesh",
         lambda context: (object(), object()),
     )
-    # The decoder helper imports its own function reference, so patch both
-    # references while keeping the real MTP helper and model lifecycle intact.
+    # Upstream #6289 moved MTP FSDP into MTPDecoder._apply_fsdp. The
+    # structural-only local adapter now calls Decoder._apply_fsdp, which
+    # imports this helper at call time; patching the real source reference
+    # keeps the actual temporary-module-registration lifecycle intact.
     monkeypatch.setattr(decoder_fsdp, "apply_fsdp_to_decoder", capture_fsdp_call)
-    monkeypatch.setattr(mtp_fsdp, "apply_fsdp_to_decoder", capture_fsdp_call)
 
     model._apply_fsdp(
         parallelism_context=SimpleNamespace(pp_enabled=False, ep=4),

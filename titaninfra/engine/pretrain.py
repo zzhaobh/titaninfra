@@ -302,8 +302,7 @@ def run_train(
 
     save_wandb_run_id(dump_folder)
 
-    from titaninfra.profiling import install_op_region_hooks, patch_profiler
-    patch_profiler(trainer, train_config)
+    from titaninfra.profiling import install_op_region_hooks
     if train_config.enable_profiling:
         install_op_region_hooks(trainer.engine.model_parts)
 
