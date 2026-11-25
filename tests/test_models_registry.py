@@ -238,6 +238,32 @@ class TestLoadModelSpecRouting:
         P._load_model_spec("llama4", "17B")
         tt_module.model_registry.assert_called_once_with("17B")
 
+    def test_new_build_model_config_registry_receives_training_context(self, monkeypatch):
+        """New upstream registries receive real parallelism, seq_len and backend."""
+        import titaninfra.engine.pretrain as P
+
+        monkeypatch.setattr(P, "logger", MagicMock())
+        monkeypatch.setattr("titaninfra.models.is_supported", lambda f: False)
+        tt_module = MagicMock(spec=["build_model_config"])
+        tt_module.build_model_config.return_value = MagicMock(name="tt_spec")
+        monkeypatch.setattr(P.importlib.util, "find_spec", lambda name: object())
+        monkeypatch.setattr(P.importlib, "import_module", lambda name: tt_module)
+        parallelism = object()
+
+        P._load_model_spec(
+            "kimi_k2_7",
+            "Kimi-VL-A3B",
+            parallelism=parallelism,
+            seq_len=2048,
+            attn_backend="sdpa",
+        )
+        tt_module.build_model_config.assert_called_once_with(
+            "Kimi-VL-A3B",
+            parallelism=parallelism,
+            seq_len=2048,
+            attn_backend="sdpa",
+        )
+
     def test_unknown_family_raises(self, monkeypatch):
         """Verify unknown family raises."""
         import titaninfra.engine.pretrain as P

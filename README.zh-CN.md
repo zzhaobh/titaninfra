@@ -239,7 +239,7 @@ Trainer → DCP checkpoint → 恢复训练或导出 HF
 | **Gemma4** | Sliding/full 混合注意力、并行 MLP+MoE、GELU experts 和 weight tying。 |
 | **Qwen3.5** | GatedDeltaNet/full-attention 混合 decoder、vision encoder、MRoPE 和多模态训练。 |
 | **Kimi-VL** | MoonViT 视觉塔 + projector + DeepSeek-V3 语言塔。 |
-| **TorchTitan fallback** | TitanInfra 未提供原生 registry 时接入 Llama4 等其他家族。 |
+| **TorchTitan fallback** | 通过上游 registry 接入 Llama4、Kimi K2.7/Kimi-VL 等其他家族。 |
 
 ## 自研 GPU kernels
 

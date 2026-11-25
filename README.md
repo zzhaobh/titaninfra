@@ -243,7 +243,7 @@ claim that every parallel/kernel combination is validated for every family.
 | **Gemma4** | Sliding/full hybrid attention, parallel MLP+MoE, GELU experts, and weight tying. |
 | **Qwen3.5** | GatedDeltaNet/full-attention hybrid decoder, vision encoder, MRoPE, and multimodal training. |
 | **Kimi-VL** | MoonViT vision tower + projector + DeepSeek-V3 language tower. |
-| **TorchTitan fallback** | Additional families such as Llama4 when TitanInfra does not provide a native registry. |
+| **TorchTitan fallback** | Additional families such as Llama4 and Kimi K2.7/Kimi-VL through upstream registries. |
 
 ## Custom GPU kernels
 

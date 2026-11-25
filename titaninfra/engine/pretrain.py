@@ -104,7 +104,13 @@ def run_train(
 
     family, flavor = model_config.parse_name()
     _parallelism_for_build = model_config.to_torchtitan_parallelism_config()
-    model_spec = _load_model_spec(family, flavor, parallelism=_parallelism_for_build)
+    model_spec = _load_model_spec(
+        family,
+        flavor,
+        parallelism=_parallelism_for_build,
+        seq_len=train_config.seq_len,
+        attn_backend=model_config.attn_backend,
+    )
     logger.info(f"加载模型 spec：{family}/{flavor}")
 
     # local_batch_size = num_tokens_per_microbatch_per_dp_rank //
@@ -359,7 +365,14 @@ def _apply_converters(model_spec, transforms: list):
     return transform_model_config_(model_spec, transforms)
 
 
-def _load_model_spec(family: str, flavor: str, *, parallelism=None):
+def _load_model_spec(
+    family: str,
+    flavor: str,
+    *,
+    parallelism=None,
+    seq_len: int | None = None,
+    attn_backend: str = "flex",
+):
     """Load and return the requested data."""
     try:
         from titaninfra.models import is_supported as _titaninfra_is_supported
@@ -392,7 +405,24 @@ def _load_model_spec(family: str, flavor: str, *, parallelism=None):
         ) from e
 
     try:
-        model_spec = module.model_registry(flavor)
+        if hasattr(module, "model_registry"):
+            model_spec = module.model_registry(flavor)
+        elif hasattr(module, "build_model_config"):
+            if parallelism is None:
+                from torchtitan.config.parallelism import ParallelismConfig
+
+                parallelism = ParallelismConfig()
+            model_spec = module.build_model_config(
+                flavor,
+                parallelism=parallelism,
+                seq_len=seq_len,
+                attn_backend=attn_backend,
+            )
+        else:
+            raise AttributeError(
+                f"torchtitan.models.{family} exposes neither model_registry "
+                "nor build_model_config"
+            )
         logger.info(f"从 torchtitan.models.{family} 加载模型：{flavor}")
     except KeyError as e:
         configs_dict = getattr(module, f"{family}_configs", {})

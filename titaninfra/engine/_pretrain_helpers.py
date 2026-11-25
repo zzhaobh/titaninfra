@@ -720,6 +720,7 @@ def build_torchtitan_trainer_config(
     from torchtitan.components.optim import AdamW
     from torchtitan.components.optim.lr_scheduler import LRSchedulersContainer
     from torchtitan.components.optim.optim import Optim
+    from torchtitan.components.tokenizer import HuggingFaceTokenizer
     from torchtitan.config.configs import CommConfig, DebugConfig, PrecisionConfig, TrainingConfig
     from torchtitan.trainer import Trainer as TorchTitanTrainer
 
@@ -749,12 +750,19 @@ def build_torchtitan_trainer_config(
             f"参数组配置：lr_scale={scaled or '无'}, freeze={frozen or '无'}"
         )
 
+    tokenizer_cfg = HuggingFaceTokenizer.Config()
+    if model_config.family in {"kimi_vl", "kimi_k2_7"}:
+        from titaninfra.data.auto_fallback_tokenizer import AutoFallbackTokenizer
+
+        tokenizer_cfg = AutoFallbackTokenizer.Config()
+
     return TorchTitanTrainer.Config(
         model=model_spec,
         hf_assets_path=hf_assets_path,
         dump_folder=dump_folder,
         dataloader=dataloader_cfg,
         validator=validator_cfg,
+        tokenizer=tokenizer_cfg,
 
         #                          （model_config.to_torchtitan_parallelism_config()
         training=TrainingConfig(

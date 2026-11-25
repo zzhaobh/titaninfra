@@ -164,8 +164,12 @@ and state-dict FQNs. Checkpoint adapters and distributed sharding must preserve
 the model's real parameter names and shapes.
 
 See [Model families](../../README.md#model-families) for the supported navigation
-map. Support for TP/CP/EP and custom kernels is family-specific and must be
-validated for the exact configuration.
+map. Upstream families may expose either `model_registry` or the newer
+`build_model_config`; TitanInfra forwards the real parallelism, `seq_len`, and
+attention backend. Kimi-VL/Kimi K2.7 can use the upstream registry with an HF
+fallback tokenizer for tiktoken assets while standard tokenizer families keep
+the native loader. Support for TP/CP/EP and custom kernels is family-specific
+and must be validated for the exact configuration.
 
 ## Distributed execution
 
