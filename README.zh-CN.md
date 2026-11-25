@@ -28,6 +28,44 @@
 监控与诊断**。下面的章节会用具体 API 和 recipe 展示这些能力，而不是把它们
 拆成彼此独立的产品。
 
+## 一套 API 定义 Pretrain、SFT 和 CPT
+
+我们的核心易用性目标是：**设计训练流程就像设计数据流程一样自然。**
+运行时和模型资产准备好之后，你可以保留同一份 `ModelConfig`、分布式策略、
+优化器和 checkpoint 工作流，只需准备 MDS 数据并组合需要的 streams：
+
+```python
+# 1. Pretrain：一路或多路文本流。
+pretrain_stream = StreamConfig(
+    local="/data/mds/general/train", tokenizer_name="qwen3",
+    data_type="text", proportion=1.0,
+)
+result = Trainer(model=model, train=train, streams=[pretrain_stream])
+
+# 2. SFT：原生 rich messages，模型和运行时配置保持不变。
+sft_stream = StreamConfig(
+    local="/data/mds/sft/train", tokenizer_name="qwen3",
+    data_type="messages", family="qwen3", proportion=1.0,
+)
+result = Trainer(model=model, train=train, streams=[sft_stream],
+                 hf_ckpt_path="/models/Qwen3-8B")
+
+# 3. CPT：在同一次训练中混合两种数据类型，无需迁移框架。
+result = Trainer(
+    model=model,
+    train=train,
+    streams=[
+        pretrain_stream.model_copy(update={"proportion": 0.7}),
+        sft_stream.model_copy(update={"proportion": 0.3}),
+    ],
+    hf_ckpt_path="/models/Qwen3-8B",
+)
+```
+
+核心工作流就是：**准备数据、定义 streams、调用同一套 API**。从 Pretrain
+迁移到 SFT 或 CPT，不需要更换 Trainer、模型注册、分布式运行时或 checkpoint
+格式。Recipe 需要时，仍应提供初始 HF 权重或 resume checkpoint。
+
 ## 一个 Python 示例看遍公开 API
 
 我们把完整、可安全导入的示例放在 [examples/api_tour.py](examples/api_tour.py)。

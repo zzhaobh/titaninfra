@@ -307,9 +307,13 @@ def test_readme_release_focus() -> None:
         if relative == "README.md":
             assert "from-scratch pretraining" in text
             assert "singular-value entropy" in text
+            assert "One API for Pretrain, SFT, and CPT" in text
+            assert "prepare data, define streams, run the same API" in text
         else:
             assert "从零构建" in text
             assert "奇异值熵" in text
+            assert "一套 API 定义 Pretrain、SFT 和 CPT" in text
+            assert "准备数据、定义 streams、调用同一套 API" in text
 
 
 def test_no_removed_doc_links() -> None:

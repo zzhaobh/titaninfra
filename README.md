@@ -29,6 +29,46 @@ The full path is **data preparation → model definition → distributed executi
 checkpoint/export → monitoring and diagnosis**. The sections below show the
 concrete APIs and recipes rather than treating these as separate products.
 
+## One API for Pretrain, SFT, and CPT
+
+Our main usability goal is to make training-stage design feel like data design.
+Once the runtime and model assets are ready, you can keep the same
+`ModelConfig`, distributed strategy, optimizer, and checkpoint workflow. Prepare
+the MDS streams, then compose the process you need:
+
+```python
+# 1. Pretrain: one or more text streams.
+pretrain_stream = StreamConfig(
+    local="/data/mds/general/train", tokenizer_name="qwen3",
+    data_type="text", proportion=1.0,
+)
+result = Trainer(model=model, train=train, streams=[pretrain_stream])
+
+# 2. SFT: native rich messages with the same model/runtime configuration.
+sft_stream = StreamConfig(
+    local="/data/mds/sft/train", tokenizer_name="qwen3",
+    data_type="messages", family="qwen3", proportion=1.0,
+)
+result = Trainer(model=model, train=train, streams=[sft_stream],
+                 hf_ckpt_path="/models/Qwen3-8B")
+
+# 3. CPT: mix the two data types in one run—no framework migration.
+result = Trainer(
+    model=model,
+    train=train,
+    streams=[
+        pretrain_stream.model_copy(update={"proportion": 0.7}),
+        sft_stream.model_copy(update={"proportion": 0.3}),
+    ],
+    hf_ckpt_path="/models/Qwen3-8B",
+)
+```
+
+That is the core workflow: **prepare data, define streams, run the same API**.
+Moving from Pretrain to SFT or CPT does not require a different trainer, model
+registry, distributed runtime, or checkpoint format. Initial HF weights or a
+resume checkpoint are still supplied when the recipe requires them.
+
 ## One Python example: the public API tour
 
 We put the complete, import-safe tour in [examples/api_tour.py](examples/api_tour.py).
