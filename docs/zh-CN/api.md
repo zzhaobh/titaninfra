@@ -230,6 +230,9 @@ MDS 列为 `messages`、`stream_id`、`token_count`、`loss_config`、`system`
 
 ## Message 格式转换 API
 
+完整 schema、loss/history 规则、能力矩阵、MDS 契约和原生编码管线见
+[Message 系统完整规范](message-system.md)。
+
 以下函数位于 `titaninfra.data.sft.message_converter`，只转换消息结构，
 不负责 tokenize 或写入 MDS。
 

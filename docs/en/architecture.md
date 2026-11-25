@@ -100,7 +100,7 @@ size. `epoch_size_margin` protects against packing tails and shard imbalance.
 Every rank computes the same epoch sizing from the same statistics, preventing
 divergent iteration lengths and collective deadlocks.
 
-See [Data formats](data.md) and [Configuration reference](config.md) for the
+See [Message system specification](message-system.md) and [Configuration reference](config.md) for the
 exact controls.
 
 ## Message system for training

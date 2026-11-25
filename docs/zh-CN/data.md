@@ -1,6 +1,6 @@
 # 弹性数据管道与格式
 
-[English](../en/data.md) · [README](../../README.zh-CN.md)
+[English](../en/data.md) · [README](../../README.zh-CN.md) · [Message 系统完整规范](message-system.md)
 
 我们把每种训练输入都视为声明式数据流。Pretrain、SFT 和 CPT 共用同一套逐流契约：转换、统计、packing、混合、分布式分片与恢复训练。
 

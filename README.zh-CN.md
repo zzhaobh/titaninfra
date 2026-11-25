@@ -170,7 +170,7 @@ Trainer → DCP checkpoint → 恢复训练或导出 HF
 | **配置系统** | Pydantic 模型、训练和流配置，算法字段显式声明。 | `titaninfra/config/`、[配置参考](docs/zh-CN/config.md) |
 | **MDS 转换** | 将 JSONL/Parquet 转为均衡 MDS shard 和精确 `stream_stats.json`。 | `titaninfra/data/converter.py`、`recompute_stats.py`、[转换 API](docs/zh-CN/api.md#mds-格式转换-api) |
 | **运行时数据管道** | MDS 加载、token-aware epoch sizing、packing、混合和 DP 感知分片。 | `streaming_dataset.py`、`packer.py`、`token_estimator.py` |
-| **Message 系统** | 训练原生 rich blocks、loss mask、history policy、thinking/effort、tools 和 HF/IR 转换。 | `data/schema.py`、`sft/dispatch.py`、`sft/message_converter.py`、[Message 指南](docs/zh-CN/data.md#message-系统-schema) |
+| **Message 系统** | 训练原生 rich blocks、loss mask、history policy、thinking/effort、tools 和 HF/IR 转换。 | `data/schema.py`、`sft/dispatch.py`、`sft/message_converter.py`、[Message 完整规范](docs/zh-CN/message-system.md) |
 | **多模态数据** | Lance/图像解码、patch/token 估算、decode pool 和多模态 collate。 | `titaninfra/data/multimodal/` |
 | **训练引擎** | Pretrain、SFT、CPT 共用一套模型、优化器、checkpoint 和 data-loader 装配。 | `titaninfra/trainer.py`、`engine/pretrain.py`、`engine/train_step.py` |
 | **模型注册** | 家族配置、attention/model 实现、sharding 和 HF/DCP adapter。 | `titaninfra/models/`、`engine/pretrain.py::_load_model_spec` |
@@ -393,6 +393,7 @@ from titaninfra import (
 - [研究与设计动机（英文）](docs/en/research.md)
 - [API 参考](docs/zh-CN/api.md)
 - [配置参考](docs/zh-CN/config.md)
+- [Message 系统完整规范](docs/zh-CN/message-system.md)
 - [数据管道与格式](docs/zh-CN/data.md)
 - [训练与完整 recipe](docs/zh-CN/training.md)
 - [开发与测试](docs/zh-CN/development.md)

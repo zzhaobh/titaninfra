@@ -20,6 +20,7 @@ REQUIRED_PUBLIC_DOCS = (
     "docs/en/api.md",
     "docs/en/config.md",
     "docs/en/data.md",
+    "docs/en/message-system.md",
     "docs/en/training.md",
     "docs/en/development.md",
     "docs/en/architecture.md",
@@ -27,6 +28,7 @@ REQUIRED_PUBLIC_DOCS = (
     "docs/zh-CN/api.md",
     "docs/zh-CN/config.md",
     "docs/zh-CN/data.md",
+    "docs/zh-CN/message-system.md",
     "docs/zh-CN/training.md",
     "docs/zh-CN/development.md",
 )
@@ -215,7 +217,7 @@ def test_bilingual_doc_pairs_exist() -> None:
     """Required bilingual pairs exist; architecture and research are English-only."""
     english = {path.name for path in (REPO_ROOT / "docs" / "en").glob("*.md")}
     chinese = {path.name for path in (REPO_ROOT / "docs" / "zh-CN").glob("*.md")}
-    required = {"api.md", "config.md", "data.md", "training.md", "development.md"}
+    required = {"api.md", "config.md", "data.md", "message-system.md", "training.md", "development.md"}
     assert required <= english
     assert required <= chinese
     assert (REPO_ROOT / "README.md").is_file()
@@ -279,6 +281,16 @@ def test_research_guides_are_linked_from_navigation() -> None:
         text = (REPO_ROOT / relative).read_text(encoding="utf-8")
         assert "architecture.md" in text
         assert "research.md" in text
+
+
+def test_message_system_spec_is_complete() -> None:
+    """The dedicated Message specification covers schema, runtime, and limits."""
+    for language in ("en", "zh-CN"):
+        text = (REPO_ROOT / "docs" / language / "message-system.md").read_text(encoding="utf-8")
+        for section in ("Block", "Loss", "History", "Tool", "MDS", "tokenize_sample"):
+            assert section.lower() in text.lower(), f"{language} Message spec lacks {section}"
+    for relative in ("README.md", "README.zh-CN.md"):
+        assert "message-system.md" in (REPO_ROOT / relative).read_text(encoding="utf-8")
 
 
 def test_readme_release_focus() -> None:

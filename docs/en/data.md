@@ -1,6 +1,6 @@
 # Elastic Data Pipeline and Formats
 
-[简体中文](../zh-CN/data.md) · [README](../../README.md)
+[简体中文](../zh-CN/data.md) · [README](../../README.md) · [Message system specification](message-system.md)
 
 We treat every training input as a declarative stream. Conversion, statistics, packing, mixing, distributed sharding, and resume use the same per-stream contract for Pretrain, SFT, and CPT.
 

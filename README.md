@@ -172,7 +172,7 @@ entry point instead of reading the whole tree first.
 | **Configuration** | Pydantic model, training, and stream configs with explicit algorithm fields. | `titaninfra/config/`, [Configuration reference](docs/en/config.md) |
 | **MDS conversion** | Converts JSONL/Parquet into balanced MDS shards and exact `stream_stats.json`. | `titaninfra/data/converter.py`, `recompute_stats.py`, [Conversion APIs](docs/en/api.md#mds-conversion-apis) |
 | **Runtime data pipeline** | MDS loading, token-aware epoch sizing, packing, mixing, and DP-aware sharding. | `streaming_dataset.py`, `packer.py`, `token_estimator.py` |
-| **Message system** | Training-native rich blocks, loss masks, history policy, thinking/effort, tools, and HF/IR conversion. | `data/schema.py`, `sft/dispatch.py`, `sft/message_converter.py`, [Message guide](docs/en/data.md#message-system-schema) |
+| **Message system** | Training-native rich blocks, loss masks, history policy, thinking/effort, tools, and HF/IR conversion. | `data/schema.py`, `sft/dispatch.py`, `sft/message_converter.py`, [Message specification](docs/en/message-system.md) |
 | **Multimodal data** | Lance/image decoding, patch/token estimation, image decode pooling, and multimodal collation. | `titaninfra/data/multimodal/` |
 | **Training engine** | One engine for Pretrain, SFT, and CPT with shared model, optimizer, checkpoint, and data-loader setup. | `titaninfra/trainer.py`, `engine/pretrain.py`, `engine/train_step.py` |
 | **Model registry** | Family configs, attention/model implementations, sharding, and HF/DCP adapters. | `titaninfra/models/`, `engine/pretrain.py::_load_model_spec` |
@@ -401,6 +401,7 @@ from titaninfra import (
 - [Research and design rationale](docs/en/research.md)
 - [API reference](docs/en/api.md)
 - [Configuration reference](docs/en/config.md)
+- [Message system specification](docs/en/message-system.md)
 - [Data pipeline and formats](docs/en/data.md)
 - [Training and complete recipes](docs/en/training.md)
 - [Development and testing](docs/en/development.md)

@@ -234,6 +234,9 @@ statistics; the same values are persisted in `stream_stats.json`.
 
 ## Message-format conversion APIs
 
+For the complete schema, loss/history rules, capability matrix, MDS contract,
+and native encoding pipeline, see the [Message system specification](message-system.md).
+
 These functions live in `titaninfra.data.sft.message_converter`. They convert
 message structure only; they do not tokenize or write MDS.
 
