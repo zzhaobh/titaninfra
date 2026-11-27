@@ -206,6 +206,47 @@ except dp_shard=-1 for automatic FSDP sharding."""
         ),
     )
 
+    lora_rank: int | None = Field(
+        default=None,
+        gt=0,
+        description=(
+            "LoRA 秩（启用 PEFT 时必填）。\n"
+            "- None: 不启用 LoRA（默认，全量训练）\n"
+            "- >0: 启用 LoRA，冻结 base 权重，只训练 adapter\n"
+            "GroupedLinear 要求 rank % 8 == 0。\n"
+            "启用后必须提供 initial_load_path 或 initial_load_in_hf 作为 base 权重来源。"
+        ),
+    )
+    lora_alpha: float = Field(
+        default=16.0,
+        description="LoRA 缩放因子，输出乘 alpha/rank。常用值 16~64。",
+    )
+    lora_target_modules: list[str] | None = Field(
+        default=None,
+        description=(
+            "LoRA 目标模块（FQN 后缀匹配，非 glob）。\n"
+            "- None: 所有支持的 projection（默认）\n"
+            "- 示例: ['wqkv', 'wo', 'w13', 'w2']（attention + MoE experts）\n"
+            "注意: 空 list [] 表示不匹配任何层（通常无意义）。"
+        ),
+    )
+    lora_trainable_modules: list[str] = Field(
+        default_factory=list,
+        description=(
+            "保持全量可训练的模块路径（config 路径匹配）。\n"
+            "这些模块下的所有 config 保持全量可训练，不做 Frozen。\n"
+            "示例: ['vision_encoder']（VLM 场景视觉塔全量训练 + 语言塔 LoRA）。"
+        ),
+    )
+    lora_expert_adapter_layout: Literal["per_expert", "shared_outer"] = Field(
+        default="per_expert",
+        description=(
+            "MoE routed expert 的 LoRA adapter 布局。\n"
+            "- per_expert: 每个 expert 独立的 A/B 因子（默认）\n"
+            "- shared_outer: 共享模型维侧的因子（w13 的 A、w2 的 B），EP 上 replicate"
+        ),
+    )
+
     @model_validator(mode="after")
     def validate_ep_config(self) -> "ModelConfig":
         """Validate the supplied configuration."""

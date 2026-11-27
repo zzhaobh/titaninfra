@@ -856,6 +856,7 @@ def build_torchtitan_trainer_config(
             last_save_in_hf=train_config.last_save_in_hf,
             export_dtype=train_config.export_dtype,
             enable_first_step_checkpoint=train_config.enable_first_step_checkpoint,
+            model_param_checkpoint_type_map=_build_lora_checkpoint_type_map(model_config),
         ),
 
         debug=DebugConfig(seed=train_config.seed),
@@ -873,3 +874,25 @@ def build_torchtitan_trainer_config(
         ),
 
     )
+
+
+def _build_lora_checkpoint_type_map(model_config):
+    """Build model_param_checkpoint_type_map for LoRA, else None.
+
+    When LoRA is enabled, maps each parameter FQN to BASE/CHECKPOINT/NEW
+    so that step checkpoints contain only adapter + optimizer state
+    (excluding frozen base weights).
+    """
+    if model_config.lora_rank is None:
+        return None
+    from torchtitan.config.function import CallableFunction
+    from torchtitan.config.transform.lora import LoRATransform
+
+    transform = LoRATransform(
+        rank=model_config.lora_rank,
+        alpha=model_config.lora_alpha,
+        target_modules=model_config.lora_target_modules,
+        trainable_modules=model_config.lora_trainable_modules,
+        expert_adapter_layout=model_config.lora_expert_adapter_layout,
+    )
+    return CallableFunction.Config(fn=transform.param_checkpoint_type)

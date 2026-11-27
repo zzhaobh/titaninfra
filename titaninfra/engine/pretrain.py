@@ -158,6 +158,14 @@ def run_train(
         )
         logger.info(f"已覆盖 MoE token_dispatcher → ep_backend={model_config.ep_backend!r}")
 
+    if model_config.lora_rank is not None:
+        model_spec = _apply_lora_transform(model_spec, model_config)
+        logger.info(
+            f"已应用 LoRATransform（rank={model_config.lora_rank}, "
+            f"alpha={model_config.lora_alpha}, "
+            f"target={model_config.lora_target_modules}）"
+        )
+
 
     if model_config.fsdp_explicit_prefetch:
         if model_config.pp > 1:
@@ -594,6 +602,26 @@ def _apply_moe_config(model_spec, load_balance_coeff: float | None, top_k: int |
         new_layers.append(dataclasses.replace(layer, feed_forward=new_moe))
 
     return dataclasses.replace(model_spec, layers=new_layers)
+
+
+def _apply_lora_transform(model_spec, model_config):
+    """Apply LoRATransform for PEFT (Parameter-Efficient Fine-Tuning).
+
+    Freezes base weights and trains only LoRA adapters. The caller must also
+    set checkpointer.model_param_checkpoint_type_map = lora.param_checkpoint_type
+    so that step checkpoints contain only adapter + optimizer state.
+    """
+    from torchtitan.config.override import transform_model_config_
+    from torchtitan.config.transform.lora import LoRATransform
+
+    transform = LoRATransform(
+        rank=model_config.lora_rank,
+        alpha=model_config.lora_alpha,
+        target_modules=model_config.lora_target_modules,
+        trainable_modules=model_config.lora_trainable_modules,
+        expert_adapter_layout=model_config.lora_expert_adapter_layout,
+    )
+    return transform_model_config_(model_spec, [transform])
 
 
 def _apply_moe_comm_backend(
