@@ -170,18 +170,21 @@ class DeepSeekV4Attention(Attention):
             if self.compress_rate > 1:
                 num_compressed_keys = num_keys // self.compress_rate
                 if self.compress_rate == 4:
-                    # The indexer scores every compressed key; attention reads
-                    # only the top-k.
-                    attention_op_flops += (
-                        6
-                        * self.index_n_heads
-                        * self.index_head_dim
-                        * int(num_compressed_keys.sum())
-                    )
+                    # The indexer scores every compressed key without grad
+                    # (forward only); attention reads only the top-k.
+                    index_dim = self.index_n_heads * self.index_head_dim
+                    attention_op_flops += 2 * index_dim * int(num_compressed_keys.sum())
                     assert self.indexer is not None
                     num_compressed_keys = num_compressed_keys.clamp(
                         max=self.indexer.inner_indexer.topk
                     )
+                    # The indexer loss recomputes the top-k scores with grad.
+                    # The forward repeats the scoring pass, so only the
+                    # backward is new work.
+                    if self.inner_attention.aux_loss is not None:
+                        attention_op_flops += (
+                            4 * index_dim * int(num_compressed_keys.sum())
+                        )
                 attention_op_flops += quadratic_attention_flops(
                     num_heads=self.n_heads,
                     qk_head_dim=self.head_dim,

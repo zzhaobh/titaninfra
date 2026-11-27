@@ -151,13 +151,13 @@ except dp_shard=-1 for automatic FSDP sharding."""
         ),
     )
 
-    attn_backend: Literal["flex"] = Field(
+    attn_backend: Literal["flex", "varlen"] = Field(
         ...,
         description=(
-            "Attention 计算后端。唯一取值 'flex'（Flex Attention，支持 packing + "
-            "block_causal + Context Parallel）——sdpa 已随 torchtitan upstream-tip "
-            "删除。仍是 A 类无默认必填字段（config=复现规格，不留隐藏默认），而非"
-            "直接去掉这个字段，是为了保持生产 recipe 显式写出算法路径的既有约定。"
+            "Attention 计算后端。\n"
+            "- flex: Flex Attention（支持 packing + block_causal + Context Parallel）\n"
+            "- varlen: 变长注意力（Kimi K3 的 KDA 层等场景必需；gpt_oss 可选，"
+            "但训练时 sinks 梯度需要 FA4 硬件或 torch nightly 20261125+）"
         ),
     )
     attn_mask_type: Literal["causal", "block_causal"] = Field(

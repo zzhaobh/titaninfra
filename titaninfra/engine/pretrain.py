@@ -454,10 +454,16 @@ def _apply_attn_backend(model_spec, attn_backend: str):
         SlidingWindowVarlenInnerAttention,
     )
 
+    if attn_backend == "varlen":
+        # Model was already built with varlen attention (e.g. kimi_k3 KDA
+        # layers, or gpt_oss explicitly opting into varlen for eval).
+        # No override needed.
+        return model_spec
+
     if attn_backend != "flex":
         raise ValueError(
-            f"Unknown attn_backend: {attn_backend!r} (only 'flex' is "
-            "supported — sdpa was removed with the torchtitan upstream-tip "
+            f"Unknown attn_backend: {attn_backend!r} (supported: 'flex', "
+            "'varlen' — sdpa was removed with the torchtitan upstream-tip "
             "migration, see config/model.py)"
         )
 

@@ -141,7 +141,7 @@ class MTPTransformerBlock(TransformerBlock):
         *,
         padding_mask: torch.Tensor | None = None,
         aux_loss_denominator: torch.Tensor | None = None,
-    ):
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         mtp_padding_mask_T = ~mtp_input_valid_mask
         if padding_mask is not None:
             mtp_padding_mask_T = mtp_padding_mask_T | padding_mask
@@ -167,7 +167,7 @@ class MTPTransformerBlock(TransformerBlock):
             )
         else:
             h = h + self.feed_forward(self.ffn_norm(h))
-        return maybe_gather_tp_input(self.mtp_norm, self.mtp_norm(h))
+        return h, maybe_gather_tp_input(self.mtp_norm, self.mtp_norm(h))
 
     def _maybe_shard_mtp_valid_mask_across_tp(
         self, mtp_input_valid_mask_T: torch.Tensor
@@ -448,7 +448,7 @@ class MTPDecoder(Decoder):
                     if aux_loss_denominators is None
                     else aux_loss_denominators[depth]
                 )
-            prev_depth_hidden = layer(
+            prev_depth_hidden, mtp_output = layer(
                 mtp_input_embed,
                 prev_depth_hidden,
                 mtp_input_valid_mask,
@@ -457,7 +457,7 @@ class MTPDecoder(Decoder):
                 padding_mask=padding_mask,
                 aux_loss_denominator=aux_loss_denominator,
             )
-            mtp_outputs.append(prev_depth_hidden)
+            mtp_outputs.append(mtp_output)
 
         outputs = (h, *mtp_outputs)
         if self._skip_lm_head:

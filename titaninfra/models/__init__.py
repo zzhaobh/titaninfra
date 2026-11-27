@@ -90,6 +90,7 @@ _FAMILY_MODULES: tuple[str, ...] = (
     "llama3",       # Dense with attention-owned RoPE
     "qwen3_5",      # Gated-delta linear attention and vision
     "kimi_vl",      # MoonViT plus DeepSeek-V3 language tower
+    "kimi_k3",      # KDA + Gated MLA hybrid, inherited from upstream
 )
 
 for _family in _FAMILY_MODULES:

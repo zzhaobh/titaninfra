@@ -87,7 +87,7 @@ def _make_gptoss_attn_config(
     *,
     dim: int,
     layer_id: int,
-    attn_backend: str = "varlen",
+    attn_backend: str = "flex",
     n_heads: int = 64,
     n_kv_heads: int = 8,
     head_dim: int = 64,
@@ -237,7 +237,7 @@ def _build_gptoss_layers(
     num_experts: int,
     top_k: int,
     load_balance_coeff: float | None,
-    attn_backend: str = "varlen",
+    attn_backend: str = "flex",
     moe_comm_backend: str = "standard",
     non_blocking_capacity_factor: float | None = None,
     rope: RoPE.Config,
@@ -316,7 +316,7 @@ def _build_gptoss_layers(
 
 def _debugmodel(
     moe_comm_backend: str = "standard",
-    attn_backend: str = "varlen",
+    attn_backend: str = "flex",
     parallelism=None,
 ) -> GptOssModel.Config:
     dim = 256
@@ -377,7 +377,7 @@ def _debugmodel(
 
 def _20b(
     moe_comm_backend: str = "standard",
-    attn_backend: str = "varlen",
+    attn_backend: str = "flex",
     parallelism=None,
 ) -> GptOssModel.Config:
     dim = 2880
@@ -435,7 +435,7 @@ def _20b(
 
 def _120b(
     moe_comm_backend: str = "standard",
-    attn_backend: str = "varlen",
+    attn_backend: str = "flex",
     parallelism=None,
 ) -> GptOssModel.Config:
     dim = 2880
@@ -501,7 +501,7 @@ gptoss_configs = {
 def model_registry(
     flavor: str,
     moe_comm_backend: str = "standard",
-    attn_backend: str = "varlen",
+    attn_backend: str = "flex",
     parallelism=None,
 ) -> GptOssModel.Config:
     """Build GptOssModel.Config with topology-derived EP and SP declarations.

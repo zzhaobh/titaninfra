@@ -78,6 +78,32 @@ class Attention(BaseAttention):
                 sliding_window_size=self.sliding_window_size,
             )
 
+        def flops(self, positions: torch.Tensor) -> int:
+            """Position-aware FLOPs estimator for the Decoder API."""
+            from torchtitan.models.common.attention.attention import (
+                SlidingWindowFlexInnerAttention,
+                SlidingWindowVarlenInnerAttention,
+            )
+            from torchtitan.models.common.flops import quadratic_attention_flops
+
+            num_keys = positions + 1
+            if isinstance(
+                self.inner_attention,
+                (
+                    SlidingWindowFlexInnerAttention.Config,
+                    SlidingWindowVarlenInnerAttention.Config,
+                ),
+            ):
+                num_keys = num_keys.clamp(max=self.inner_attention.sliding_window_size)
+            elif self.sliding_window_size is not None:
+                num_keys = num_keys.clamp(max=self.sliding_window_size)
+            return quadratic_attention_flops(
+                num_heads=self.n_heads,
+                qk_head_dim=self.head_dim,
+                v_head_dim=self.head_dim,
+                num_keys=num_keys,
+            )
+
     def __init__(self, config: Config):
         super().__init__()
         self.head_dim = config.head_dim
