@@ -429,6 +429,45 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     cd / && rm -rf /opt/deepep && \
     rm -rf /tmp/*
 
+# ---- DeepEP header integrity + JIT include path verification ----
+# DeepEP V2 uses JIT (runtime NVCC compilation) for dispatch/combine kernels.
+# The JIT compiler needs the .cuh headers under deep_ep/include/ to be present
+# AND discoverable. A missing header or wrong include path causes runtime
+# "NVCC compilation failed" on the first EP training step, not at build time.
+# This step turns both failure modes into build failures.
+RUN python3 - <<'DEEPEP_HEADER_CHECK'
+import os, pathlib
+pkg = pathlib.Path("/usr/local/lib/python3.12/dist-packages/deep_ep/include/deep_ep")
+required_impls = [
+    "combine.cuh", "dispatch.cuh", "barrier.cuh",
+    "combine_reduce_epilogue.cuh", "combine_utils.cuh",
+    "dispatch_copy_epilogue.cuh",
+    "hybrid_combine.cuh", "hybrid_dispatch.cuh",
+    "pp_send_recv.cuh",
+]
+required_common = [
+    "comm.cuh", "compiled.cuh", "exception.cuh",
+    "handle.cuh", "layout.cuh", "math.cuh", "ptx.cuh",
+]
+missing = []
+for f in required_impls:
+    if not (pkg / "impls" / f).is_file():
+        missing.append(f"impls/{f}")
+for f in required_common:
+    if not (pkg / "common" / f).is_file():
+        missing.append(f"common/{f}")
+if missing:
+    raise SystemExit(f"DeepEP headers MISSING: {missing}")
+total = len(list(pkg.rglob("*.cuh")))
+assert total >= 18, f"Expected >=18 .cuh headers, found {total}"
+print(f"  DeepEP headers OK: {total} .cuh files under {pkg}")
+DEEPEP_HEADER_CHECK
+
+# DeepEP JIT compiler include path: the JIT invokes NVCC with -I pointing to
+# the package's include/ directory. CPATH supplements it so that any transitive
+# includes (e.g. deep_jit headers vendored as a submodule) also resolve.
+ENV CPATH=/usr/local/lib/python3.12/dist-packages/deep_ep/include:${CPATH}
+
 # ---- FlashMLA (vLLM 0.33.0's fork revision) ----
 # Use e2afa5fd from vLLM's cmake/external_projects/flashmla.cmake. The fork carries
 # DeepSeek V4.1 kernels and targets the torch >=2.10 stable ABI without upstream's
