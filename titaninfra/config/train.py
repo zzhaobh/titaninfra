@@ -74,8 +74,8 @@ class TrainConfig(BaseModel):
             "优化器类型。\n"
             "- 'Adam' / 'AdamW': 标准 Adam/AdamW\n"
             "- 'MuonAdamW': 混合优化器（Muon for 2D linear params + AdamW for rest）\n"
-            "- 'DistMuon': 分布式 Muon（FlexShard 重分布 + Newton-Schulz，"
-            "配合 Dist-MoE 使用；按 FQN 声明 compute layout，支持 EP/EDP 分片）"
+            "- 'DistMuon': 分布式 Muon（FlexShard 重分布 + Newton-Schulz；"
+            "当前支持 kimi_k3 且 tp=1，按 FQN 声明 compute layout，兼容 DeepEP EP/EDP 分片）"
         ),
     )
     lr: float = Field(..., gt=0, description="学习率（AdamW 部分，MuonAdamW 模式下用于 non-2D params）")
@@ -305,6 +305,28 @@ class TrainConfig(BaseModel):
             "支持两种用法：\n"
             "1. 断点续训（推荐）：不设置，自动从 dump_folder/ckpt_subdir 加载最新\n"
             "2. Checkpoint 迁移：设置 resume_from 指向其他路径的 checkpoint"
+        ),
+    )
+    initial_load_path: str | None = Field(
+        default=None,
+        description=(
+            "显式初始权重路径，优先于 Trainer 的 hf_ckpt_path。"
+            "支持 HF 目录、DCP checkpoint 根目录或具体 step-N；"
+            "LoRA 必须提供包含 BASE 权重的 checkpoint。"
+        ),
+    )
+    initial_load_in_hf: bool = Field(
+        default=False,
+        description=(
+            "initial_load_path 是否为 HF safetensors；DCP 保持 False。"
+            "仅用于显式 initial_load_path，hf_ckpt_path 仍自动识别格式。"
+        ),
+    )
+    initial_load_model_only: bool | None = Field(
+        default=None,
+        description=(
+            "初始加载是否只恢复模型。None 保持旧行为：HF 为 True，DCP 为 False。"
+            "LoRA 必须为 True，避免把 base optimizer 状态载入新优化器。"
         ),
     )
     keep_latest_k: int = Field(

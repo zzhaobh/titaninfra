@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Iterable, Iterator
+from datetime import timedelta
 from typing import TYPE_CHECKING, Any
 
 import torch
@@ -22,6 +23,27 @@ if TYPE_CHECKING:
     from torchtitan.training_engine import TrainingEngine as _TorchTitanTrainingEngine
 
 logger = logging.getLogger(__name__)
+
+
+_PARALLELISM_CONTEXTS: dict[tuple[Any, ...], Any] = {}
+
+
+def _share_parallelism_context(context):
+    """Reuse mesh objects when sequential trainers use the same topology."""
+    key = (
+        context.dp_replicate,
+        context.dp_shard,
+        context.cp,
+        context.tp,
+        context.pp,
+        context.ep,
+        context.world_size,
+        context.enable_sequence_parallel,
+        context._real_pp_group_for_fake_spmd,
+    )
+    if key not in _PARALLELISM_CONTEXTS:
+        _PARALLELISM_CONTEXTS[key] = context
+    return _PARALLELISM_CONTEXTS[key]
 
 
 def install_torch_dist_set_timeout_compat() -> None:
@@ -117,6 +139,24 @@ if _TorchTitanTrainingEngine is not None:
         """
 
         _moe_aux_plugin: Any = None
+
+        def _initialize_distributed_runtime(self) -> None:
+            super()._initialize_distributed_runtime()
+            self.parallelism_context = _share_parallelism_context(
+                self.parallelism_context
+            )
+            from torchtitan.distributed import utils as dist_utils
+
+            dist_utils.set_pg_timeouts(
+                timeout=timedelta(seconds=self.config.comm.init_timeout_seconds),
+                parallelism_context=self.parallelism_context,
+            )
+            dist_utils.set_determinism(
+                self.parallelism_context,
+                self.device,
+                self.config.debug,
+                distinct_seed_mesh_axes=self.config.debug.distinct_seed_mesh_axes,
+            )
 
         def _non_pp_forward_backward_microbatch(
             self,

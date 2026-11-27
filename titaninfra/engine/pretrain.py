@@ -193,6 +193,8 @@ def run_train(
         task_name=task_name,
         stage=stage,
         is_hf_path_fn=_is_hf_path,
+        initial_load_path=train_config.initial_load_path,
+        initial_load_in_hf=train_config.initial_load_in_hf,
     )
     ckpt_subdir = ckpt_setup.ckpt_subdir
     dump_folder = ckpt_setup.dump_folder
@@ -607,11 +609,12 @@ def _apply_moe_config(model_spec, load_balance_coeff: float | None, top_k: int |
 def _apply_lora_transform(model_spec, model_config):
     """Apply LoRATransform for PEFT (Parameter-Efficient Fine-Tuning).
 
-    Freezes base weights and trains only LoRA adapters. The caller must also
-    set checkpointer.model_param_checkpoint_type_map = lora.param_checkpoint_type
-    so that step checkpoints contain only adapter + optimizer state.
+    Freezes non-target base weights and trains LoRA adapters plus any explicitly
+    trainable modules. The caller must also set
+    checkpointer.model_param_checkpoint_type_map = lora.param_checkpoint_type
+    so that step checkpoints exclude frozen base weights.
     """
-    from torchtitan.config.override import transform_model_config_
+    from torchtitan.config.transform import transform_model_config_
     from torchtitan.config.transform.lora import LoRATransform
 
     transform = LoRATransform(

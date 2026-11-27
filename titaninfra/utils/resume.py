@@ -34,6 +34,8 @@ def resolve_checkpoint_config(
     dump_folder: str,
     hf_ckpt_path: str | None,
     task_name: str | None,
+    initial_load_path: str | None = None,
+    initial_load_in_hf: bool = False,
     stage: str = "pretrain",
     is_hf_path_fn=None,
 ) -> CheckpointSetup:
@@ -71,8 +73,27 @@ def resolve_checkpoint_config(
     # Resolve initial_load_path and initial_load_in_hf.
     using_default_checker = is_hf_path_fn is None
     hf_checker = is_hf_path_fn or _default_is_hf_path
-    initial_load_path = hf_ckpt_path or None
-    initial_load_in_hf = hf_checker(hf_ckpt_path) if hf_ckpt_path else False
+    if initial_load_path is None:
+        initial_load_path = hf_ckpt_path or None
+        initial_load_in_hf = hf_checker(hf_ckpt_path) if hf_ckpt_path else False
+    if initial_load_path and "://" not in initial_load_path:
+        initial_load_path = os.path.abspath(initial_load_path)
+    if (
+        initial_load_path
+        and not initial_load_in_hf
+        and os.path.isdir(initial_load_path)
+        and not os.path.isfile(os.path.join(initial_load_path, ".metadata"))
+    ):
+        completed_steps = [
+            step
+            for step in _list_checkpoints(initial_load_path)
+            if os.path.isfile(os.path.join(initial_load_path, step, ".metadata"))
+        ]
+        if completed_steps:
+            initial_load_path = os.path.join(
+                initial_load_path,
+                _find_latest_step(completed_steps),
+            )
 
     # Validate HF assets only with the default checker; custom checkers own
     # their validation policy.

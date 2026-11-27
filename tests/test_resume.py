@@ -125,6 +125,63 @@ class TestResolveCheckpointConfigNoResume:
         assert setup.initial_load_path == str(hf_dir)
         assert setup.initial_load_in_hf is True
 
+    def test_explicit_initial_load_path_overrides_hf_path(self):
+        from inspect import signature
+
+        assert "initial_load_path" in signature(resolve_checkpoint_config).parameters
+        setup = resolve_checkpoint_config(
+            resume_from=None,
+            ckpt_subdir="checkpoints",
+            dump_folder="output",
+            hf_ckpt_path="/hf/model",
+            task_name=None,
+            initial_load_path="/dcp/base",
+            initial_load_in_hf=False,
+            is_hf_path_fn=lambda p: True,
+        )
+        assert setup.initial_load_path == "/dcp/base"
+        assert setup.initial_load_in_hf is False
+
+    def test_relative_initial_load_path_is_normalized(self):
+        setup = resolve_checkpoint_config(
+            resume_from=None,
+            ckpt_subdir="checkpoints",
+            dump_folder="output",
+            hf_ckpt_path=None,
+            task_name=None,
+            initial_load_path="relative/base",
+        )
+        assert setup.initial_load_path == os.path.abspath("relative/base")
+
+    def test_dcp_initial_load_root_selects_latest_completed_step(self, tmp_path):
+        checkpoint_root = tmp_path / "base"
+        for step in ("step-2", "step-10", "step-20"):
+            (checkpoint_root / step).mkdir(parents=True)
+        (checkpoint_root / "step-2" / ".metadata").touch()
+        (checkpoint_root / "step-10" / ".metadata").touch()
+
+        setup = resolve_checkpoint_config(
+            resume_from=None,
+            ckpt_subdir="checkpoints",
+            dump_folder="output",
+            hf_ckpt_path=None,
+            task_name=None,
+            initial_load_path=str(checkpoint_root),
+        )
+        assert setup.initial_load_path == str(checkpoint_root / "step-10")
+
+    def test_train_config_preserves_initial_load_fields(self):
+        from tests.conftest import make_test_train_config
+
+        config = make_test_train_config(
+            initial_load_path="/dcp/base",
+            initial_load_in_hf=False,
+            initial_load_model_only=True,
+        )
+        assert config.initial_load_path == "/dcp/base"
+        assert config.initial_load_in_hf is False
+        assert config.initial_load_model_only is True
+
     def test_task_name_appended_to_dump_folder_only(self):
         """Verify task name appended to dump folder only."""
         setup = resolve_checkpoint_config(

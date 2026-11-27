@@ -11,6 +11,14 @@ import warnings
 logger = logging.getLogger(__name__)
 
 
+def _should_disable_accelerator_graphs(model_spec, ep_degree: int) -> bool:
+    """Whether the model cannot be captured safely by accelerator graphs."""
+    encoder_fqns = getattr(model_spec, "multimodal_encoder_fqns", None)
+    if encoder_fqns is None:
+        encoder_fqns = getattr(model_spec._owner, "multimodal_encoder_fqns", ())
+    return ep_degree > 1 or bool(encoder_fqns)
+
+
 def validate_initial_checkpoint(ckpt_setup) -> None:
     """Validate the supplied configuration."""
     if not ckpt_setup.initial_load_path:
@@ -19,15 +27,12 @@ def validate_initial_checkpoint(ckpt_setup) -> None:
     if not os.path.exists(ckpt_setup.initial_load_path):
         raise FileNotFoundError(
             f"initial_load_path 不存在: {ckpt_setup.initial_load_path}\n"
-            f"请检查 hf_ckpt_path 配置是否正确。"
+            f"请检查 initial_load_path 或 hf_ckpt_path 配置是否正确。"
         )
     logger.info(f"initial_load_path 路径验证通过: {ckpt_setup.initial_load_path}")
 
     if not ckpt_setup.initial_load_in_hf:
-        logger.warning(
-            "initial_load_in_hf=False，TorchTitan 不会以 HF 格式加载权重，"
-            "这可能导致使用随机初始化权重而非预训练权重"
-        )
+        logger.info("initial_load_in_hf=False，按 DCP checkpoint 加载初始权重")
         return
 
     _validate_hf_checkpoint_files(ckpt_setup.initial_load_path)
@@ -656,7 +661,12 @@ def _adamw_shared_kwargs(train_config) -> dict:
     }
 
 
-def _build_optimizer_config(train_config, param_groups: list, model_config=None):
+def _build_optimizer_config(
+    train_config,
+    param_groups: list,
+    model_config=None,
+    model_spec=None,
+):
     """Build optimizer config: MixedOptimizersContainer for MuonAdamW, else OptimizersContainer.
 
     ``param_groups`` is a list of ``AdamW.Config`` entries for specific
@@ -680,7 +690,12 @@ def _build_optimizer_config(train_config, param_groups: list, model_config=None)
     _optimizers = list(param_groups) + [_catch_all] if param_groups else [_catch_all]
 
     if train_config.optimizer_name == "DistMuon":
-        return _build_dist_muon_config(train_config, _optimizers, model_config)
+        return _build_dist_muon_config(
+            train_config,
+            _optimizers,
+            model_config,
+            model_spec,
+        )
 
     if train_config.optimizer_name == "MuonAdamW":
         from titaninfra.optimizers.mixed_optimizer import MixedOptimizersContainer
@@ -704,18 +719,27 @@ def _build_optimizer_config(train_config, param_groups: list, model_config=None)
     )
 
 
-def _build_dist_muon_config(train_config, optimizers, model_config):
-    """Build DistMuon optimizer config for Dist-MoE training.
-
-    DistMuon redistributes parameters from storage layout to a declared
-    compute layout before running Newton-Schulz, then writes back.
-    The compute_sharding_by_fqn and bucket_configs are architecture-specific;
-    for kimi_k3 we port the upstream recipe's layout table.
-    """
+def _build_dist_muon_config(train_config, optimizers, model_config, model_spec):
+    """Build DistMuon with architecture-specific compute layouts."""
     from torchtitan.components.optim import AdamW, DistMuon, OptimizersContainer
 
-    muon_pattern = (
-        r"layers\.\d+\.(attention|feed_forward)\..*\.weight"
+    if model_config.family != "kimi_k3":
+        raise ValueError(
+            "DistMuon currently supports kimi_k3 only; other model families "
+            "need an explicit per-projection compute layout."
+        )
+    if model_config.tp != 1:
+        raise ValueError(
+            "kimi_k3 DistMuon requires tensor_parallel_degree=1 because TP "
+            "produces unsupported _StridedShard parameter layouts."
+        )
+    from titaninfra.optimizers.dist_muon import build_kimi_k3_dist_muon_layout
+
+    muon_pattern, compute_sharding_by_fqn, bucket_configs = (
+        build_kimi_k3_dist_muon_layout(
+            model_spec,
+            model_config.to_torchtitan_parallelism_config(),
+        )
     )
     adamw_catchall = next(
         (o for o in optimizers if isinstance(o, AdamW.Config) and o.pattern == r".*"),
@@ -725,8 +749,8 @@ def _build_dist_muon_config(train_config, optimizers, model_config):
 
     dist_muon = DistMuon.Config(
         pattern=muon_pattern,
-        compute_sharding_by_fqn={},
-        bucket_configs=[],
+        compute_sharding_by_fqn=compute_sharding_by_fqn,
+        bucket_configs=bucket_configs,
         lr=train_config.muon_lr,
         weight_decay=train_config.muon_weight_decay,
         momentum=train_config.muon_momentum,
@@ -815,7 +839,10 @@ def build_torchtitan_trainer_config(
                 else -1
             ),
             steps=train_config.steps,
-            disable_accelerator_graphs=(model_config.ep > 1),
+            disable_accelerator_graphs=_should_disable_accelerator_graphs(
+                model_spec,
+                model_config.ep,
+            ),
         ),
 
         precision=PrecisionConfig(
@@ -832,7 +859,12 @@ def build_torchtitan_trainer_config(
 
         # （optim.optimizer / optim.lr_scheduler / optim.max_norm / optim.ema /
         optim=Optim.Config(
-            optimizer=_build_optimizer_config(train_config, param_groups, model_config),
+            optimizer=_build_optimizer_config(
+                train_config,
+                param_groups,
+                model_config,
+                model_spec=model_spec,
+            ),
             lr_scheduler=LRSchedulersContainer.Config(
                 warmup_steps=resolve_warmup_steps(train_config, train_config.steps),
                 decay_type="cosine" if train_config.lr_decay_type == "constant" else train_config.lr_decay_type,
@@ -848,7 +880,11 @@ def build_torchtitan_trainer_config(
             keep_latest_k=train_config.keep_latest_k,
             initial_load_path=ckpt_setup.initial_load_path,
             initial_load_in_hf=ckpt_setup.initial_load_in_hf,
-            initial_load_model_only=ckpt_setup.initial_load_in_hf,
+            initial_load_model_only=(
+                ckpt_setup.initial_load_in_hf
+                if train_config.initial_load_model_only is None
+                else train_config.initial_load_model_only
+            ),
             load_step=-1,
             exclude_from_loading=train_config.exclude_from_loading,
             async_mode=train_config.async_checkpoint,
@@ -880,8 +916,8 @@ def _build_lora_checkpoint_type_map(model_config):
     """Build model_param_checkpoint_type_map for LoRA, else None.
 
     When LoRA is enabled, maps each parameter FQN to BASE/CHECKPOINT/NEW
-    so that step checkpoints contain only adapter + optimizer state
-    (excluding frozen base weights).
+    so that step checkpoints contain adapters and explicitly trainable modules
+    while excluding frozen base weights.
     """
     if model_config.lora_rank is None:
         return None

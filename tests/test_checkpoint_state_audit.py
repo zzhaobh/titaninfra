@@ -433,6 +433,34 @@ class TestCheckpointConfigMapping:
         assert tt_config.checkpointer.initial_load_model_only is True
         assert tt_config.checkpointer.initial_load_path == "/fake/hf/model"
 
+    def test_initial_load_model_only_override(self):
+        from titaninfra.engine._pretrain_helpers import build_torchtitan_trainer_config
+        from titaninfra.utils.resume import CheckpointSetup
+
+        ckpt_setup = CheckpointSetup(
+            ckpt_subdir="checkpoints",
+            dump_folder="./outputs",
+            initial_load_path="/fake/dcp/base",
+            initial_load_in_hf=False,
+        )
+        try:
+            tt_config = build_torchtitan_trainer_config(
+                model_spec=MagicMock(),
+                hf_assets_path="/fake/tokenizer",
+                dump_folder="./outputs",
+                dataloader_cfg=MagicMock(),
+                validator_cfg=MagicMock(),
+                train_config=make_test_train_config(initial_load_model_only=True),
+                model_config=make_test_model_config(name="qwen3/0.6B"),
+                ckpt_setup=ckpt_setup,
+                ckpt_dir="checkpoints",
+                build_quantization_config_fn=lambda mc: {},
+            )
+        except ImportError:
+            pytest.skip("torchtitan not available")
+
+        assert tt_config.checkpointer.initial_load_model_only is True
+
 
 # ============================================================================
 # ============================================================================
