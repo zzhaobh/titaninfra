@@ -1,0 +1,104 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
+"""Sharding configs for Kimi K3.
+
+Declarations only: ``flavors.py`` sets these on each sub-config as it builds
+it, and ``model.parallelize()`` applies them through the Module protocol.
+Nothing here touches a mesh or a device.
+"""
+
+import spmd_types as spmd
+
+from torchtitan.distributed.parallelism_context import MeshAxisName
+from torchtitan.models.base.sharding import ShardingConfig
+from torchtitan.models.common.decoder_sharding import (
+    attention_activation_placement,
+    dense_activation_placement,
+    dense_param_placement,
+    dense_sequence_parallel_placement,
+    norm_sharding_config,
+    residual_activation_placement,
+)
+
+
+DP = MeshAxisName.DP
+TP = MeshAxisName.TP
+
+
+def tp_unsharded_weight_sharding_config(*, token_sharded: bool) -> ShardingConfig:
+    """Keep the weight TP-unsharded: R when tokens are TP-sharded, for gradient reduction; otherwise I."""
+    return ShardingConfig(
+        state_shardings=norm_sharding_config(enable_sp=token_sharded).state_shardings
+    )
+
+
+def mla_attention_sharding_config(*, enable_sp: bool) -> ShardingConfig:
+    """MLA input boundary in the residual layout."""
+    return ShardingConfig(
+        input_shardings={"x_TD": residual_activation_placement(enable_sp=enable_sp)},
+    )
+
+
+def kda_conv_sharding_config() -> ShardingConfig:
+    """Depthwise KDA convolution weights, sharded on channels (heads)."""
+    return ShardingConfig(
+        state_shardings={"weight": dense_param_placement(tp=spmd.S(0))},
+    )
+
+
+def inner_kda_sharding_config() -> ShardingConfig:
+    """The KDA kernel runs on the rank-local heads in one local SPMD region."""
+    projected_placement = dense_activation_placement(tp=spmd.S(1), cp=spmd.S(0))
+    head_placement = attention_activation_placement()
+    parameter_placement = dense_param_placement(tp=spmd.S(0))
+    kernel_inputs = {
+        "query_TC": projected_placement,
+        "key_TC": projected_placement,
+        "value_TC": projected_placement,
+        "raw_gate_THK": head_placement,
+        "raw_beta_TH": projected_placement,
+        "conv_q_weight_C1W": parameter_placement,
+        "conv_k_weight_C1W": parameter_placement,
+        "conv_v_weight_C1W": parameter_placement,
+        "A_log_H": parameter_placement,
+        "dt_bias_HK": parameter_placement,
+    }
+    return ShardingConfig(
+        input_shardings=kernel_inputs,
+        output_shardings=head_placement,
+        local_spmd=True,
+    )
+
+
+def kda_sharding_config(*, enable_sp: bool) -> ShardingConfig:
+    """Head-sharded TP for KDA, as Qwen3.5's GatedDeltaNet.
+
+    The low-rank ``forget_a`` and the output norm keep replicated weights.
+    """
+    parameter_placement = dense_param_placement(tp=spmd.S(0))
+    return ShardingConfig(
+        state_shardings={
+            "A_log": parameter_placement,
+            "dt_bias": parameter_placement,
+        },
+        input_shardings={"x_TD": residual_activation_placement(enable_sp=enable_sp)},
+    )
+
+
+def latent_routed_down_sharding_config() -> ShardingConfig:
+    """Down-projection into the routed experts' token-sharded latent space."""
+    return ShardingConfig(
+        state_shardings={"weight": dense_param_placement(tp=spmd.R)},
+        input_shardings={"input": dense_sequence_parallel_placement()},
+    )
+
+
+def latent_routed_up_sharding_config() -> ShardingConfig:
+    """Up-projection out of the token-sharded latent space."""
+    routed_up = tp_unsharded_weight_sharding_config(token_sharded=True)
+    routed_up.output_shardings = dense_sequence_parallel_placement()
+    return routed_up

@@ -656,7 +656,7 @@ def _adamw_shared_kwargs(train_config) -> dict:
     }
 
 
-def _build_optimizer_config(train_config, param_groups: list):
+def _build_optimizer_config(train_config, param_groups: list, model_config=None):
     """Build optimizer config: MixedOptimizersContainer for MuonAdamW, else OptimizersContainer.
 
     ``param_groups`` is a list of ``AdamW.Config`` entries for specific
@@ -679,6 +679,9 @@ def _build_optimizer_config(train_config, param_groups: list):
     )
     _optimizers = list(param_groups) + [_catch_all] if param_groups else [_catch_all]
 
+    if train_config.optimizer_name == "DistMuon":
+        return _build_dist_muon_config(train_config, _optimizers, model_config)
+
     if train_config.optimizer_name == "MuonAdamW":
         from titaninfra.optimizers.mixed_optimizer import MixedOptimizersContainer
 
@@ -699,6 +702,45 @@ def _build_optimizer_config(train_config, param_groups: list):
     return OptimizersContainer.Config(
         optimizers=_optimizers,
     )
+
+
+def _build_dist_muon_config(train_config, optimizers, model_config):
+    """Build DistMuon optimizer config for Dist-MoE training.
+
+    DistMuon redistributes parameters from storage layout to a declared
+    compute layout before running Newton-Schulz, then writes back.
+    The compute_sharding_by_fqn and bucket_configs are architecture-specific;
+    for kimi_k3 we port the upstream recipe's layout table.
+    """
+    from torchtitan.components.optim import AdamW, DistMuon, OptimizersContainer
+
+    muon_pattern = (
+        r"layers\.\d+\.(attention|feed_forward)\..*\.weight"
+    )
+    adamw_catchall = next(
+        (o for o in optimizers if isinstance(o, AdamW.Config) and o.pattern == r".*"),
+        None,
+    )
+    other = [o for o in optimizers if o is not adamw_catchall]
+
+    dist_muon = DistMuon.Config(
+        pattern=muon_pattern,
+        compute_sharding_by_fqn={},
+        bucket_configs=[],
+        lr=train_config.muon_lr,
+        weight_decay=train_config.muon_weight_decay,
+        momentum=train_config.muon_momentum,
+        nesterov=train_config.muon_nesterov,
+        ns_steps=train_config.muon_ns_steps,
+        adjust_lr_fn="match_rms_adamw",
+        ns_device="accelerator",
+        max_nccl_ctas_for_comms=8,
+    )
+
+    entries = [dist_muon] + other
+    if adamw_catchall is not None:
+        entries.append(adamw_catchall)
+    return OptimizersContainer.Config(optimizers=entries)
 
 
 def build_torchtitan_trainer_config(
@@ -790,7 +832,7 @@ def build_torchtitan_trainer_config(
 
         # （optim.optimizer / optim.lr_scheduler / optim.max_norm / optim.ema /
         optim=Optim.Config(
-            optimizer=_build_optimizer_config(train_config, param_groups),
+            optimizer=_build_optimizer_config(train_config, param_groups, model_config),
             lr_scheduler=LRSchedulersContainer.Config(
                 warmup_steps=resolve_warmup_steps(train_config, train_config.steps),
                 decay_type="cosine" if train_config.lr_decay_type == "constant" else train_config.lr_decay_type,

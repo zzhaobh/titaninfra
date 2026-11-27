@@ -68,12 +68,14 @@ class TrainConfig(BaseModel):
     seq_len: int = Field(..., ge=1, description="训练序列长度")
     steps: int = Field(default=100, ge=1, description="总训练步数（proportion 模式必填，choose/repeat 自动推导）")
 
-    optimizer_name: Literal["Adam", "AdamW", "MuonAdamW"] = Field(
+    optimizer_name: Literal["Adam", "AdamW", "MuonAdamW", "DistMuon"] = Field(
         ...,
         description=(
             "优化器类型。\n"
             "- 'Adam' / 'AdamW': 标准 Adam/AdamW\n"
-            "- 'MuonAdamW': 混合优化器（Muon for 2D linear params + AdamW for rest）"
+            "- 'MuonAdamW': 混合优化器（Muon for 2D linear params + AdamW for rest）\n"
+            "- 'DistMuon': 分布式 Muon（FlexShard 重分布 + Newton-Schulz，"
+            "配合 Dist-MoE 使用；按 FQN 声明 compute layout，支持 EP/EDP 分片）"
         ),
     )
     lr: float = Field(..., gt=0, description="学习率（AdamW 部分，MuonAdamW 模式下用于 non-2D params）")

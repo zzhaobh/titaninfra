@@ -1,12 +1,11 @@
-"""Kimi K3 family registration, inheriting from upstream torchtitan.
+"""Kimi K3 model family, maintained by titaninfra.
 
 K3 uses KDA (Kimi Delta Attention) + Gated MLA hybrid layers with a
 QuantileBalancedTopKRouter and SiTU-GLU experts. The KDA layers require
-Attention Gym kernels (SM90+ GPU) and the ``varlen`` attention backend;
-``flex`` is not supported for KDA.
+Attention Gym kernels (SM90+ GPU) and the ``varlen`` attention backend.
 
-Only text-only flavors are registered here. The ``_mm`` (multimodal)
-variants require additional VLM dependencies and are deferred.
+Only text-only flavors are registered. The ``_mm`` (multimodal) variants
+require additional VLM dependencies and are deferred.
 """
 
 import logging
@@ -19,9 +18,9 @@ logger = logging.getLogger(__name__)
 # on CPU-only hosts.
 # ─────────────────────────────────────────────────────────────────────────────
 try:
-    from torchtitan.models.kimi_k3 import (
+    from titaninfra.models.kimi_k3.flavors import (
         MODEL_FLAVORS as _UPSTREAM_FLAVORS,
-        build_model_config as _upstream_build_model_config,
+        build_model_config as _build_model_config,
     )
 
     __all__ = [
@@ -30,11 +29,8 @@ try:
         "MODEL_FLAVORS",
     ]
 
-    # Expose the upstream flavor map for introspection.
     MODEL_FLAVORS = _UPSTREAM_FLAVORS
 
-    # Text-only flavors accepted by this registry. Multimodal (_mm) variants
-    # are intentionally excluded until VLM dependencies are validated.
     _TEXT_ONLY_FLAVORS = frozenset({"debugmodel", "Kimi-K3"})
 
     kimi_k3_configs = {
@@ -49,7 +45,7 @@ try:
         parallelism=None,
         seq_len: int | None = None,
     ):
-        """Build a Kimi K3 model config by delegating to upstream.
+        """Build a Kimi K3 model config from titaninfra-maintained flavors.
 
         Defaults to ``varlen`` because KDA layers do not support flex
         attention. The engine's post-hoc ``_apply_attn_backend`` override
@@ -66,7 +62,7 @@ try:
 
             parallelism = ParallelismConfig()
 
-        return _upstream_build_model_config(
+        return _build_model_config(
             flavor,
             attn_backend=attn_backend,
             parallelism=parallelism,
